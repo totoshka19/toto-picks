@@ -1,0 +1,141 @@
+'use client'
+
+import Image from 'next/image'
+import { Link } from '@/i18n/navigation'
+import { motion } from 'motion/react'
+import { Heart, Star } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { tmdbPoster } from '@/lib/tmdb'
+import { useFavoritesStore } from '@/store/favorites'
+import { Skeleton } from '@/components/ui/skeleton'
+import type { Movie, TVShow } from '@/types/tmdb'
+import type { MediaType } from '@/types/app'
+
+interface MovieCardProps {
+  item: Movie | TVShow
+  mediaType: MediaType
+  genres?: { id: number; name: string }[]
+}
+
+const isMovie = (item: Movie | TVShow): item is Movie => 'title' in item
+
+export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
+  const title = isMovie(item) ? item.title : item.name
+  const date = isMovie(item) ? item.release_date : item.first_air_date
+  const year = date ? new Date(date).getFullYear() : null
+  const posterUrl = tmdbPoster(item.poster_path, 'md')
+  const href = mediaType === 'movie' ? `/movie/${item.id}` : `/show/${item.id}`
+
+  const { add, remove, has } = useFavoritesStore()
+  const isFavorite = has(item.id, mediaType)
+
+  const itemGenres = genres
+    ? item.genre_ids?.slice(0, 2).map((id) => genres.find((g) => g.id === id)?.name).filter(Boolean)
+    : []
+
+  const toggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (isFavorite) {
+      remove(item.id, mediaType)
+    } else {
+      add({
+        id: item.id,
+        mediaType,
+        title,
+        posterPath: item.poster_path,
+        voteAverage: item.vote_average,
+        releaseDate: date ?? '',
+        genreIds: item.genre_ids ?? [],
+      })
+    }
+  }
+
+  const rating = item.vote_average
+  const ratingColor =
+    rating >= 7 ? 'text-green-400' : rating >= 5 ? 'text-yellow-400' : 'text-red-400'
+
+  return (
+    <Link href={href} className="group block">
+      <motion.div
+        className="relative overflow-hidden rounded-lg bg-card"
+        whileHover={{ y: -4 }}
+        transition={{ duration: 0.2 }}
+      >
+        {/* Poster */}
+        <div className="relative aspect-[2/3] overflow-hidden bg-muted">
+          {posterUrl ? (
+            <Image
+              src={posterUrl}
+              alt={title}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-muted-foreground">
+              <span className="text-xs">No poster</span>
+            </div>
+          )}
+
+          {/* Hover overlay */}
+          <motion.div
+            className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          >
+            <div className={cn('flex items-center gap-1 text-lg font-bold', ratingColor)}>
+              <Star className="h-5 w-5 fill-current" />
+              {rating.toFixed(1)}
+            </div>
+          </motion.div>
+
+          {/* Favorite button */}
+          <button
+            onClick={toggleFavorite}
+            className={cn(
+              'absolute top-2 right-2 rounded-full p-1.5 backdrop-blur-sm transition-all',
+              'opacity-0 group-hover:opacity-100',
+              isFavorite
+                ? 'bg-primary text-primary-foreground opacity-100'
+                : 'bg-black/50 text-white hover:bg-primary hover:text-primary-foreground'
+            )}
+            aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <Heart className={cn('h-4 w-4', isFavorite && 'fill-current')} />
+          </button>
+
+          {/* Rating badge (always visible) */}
+          <div className={cn('absolute bottom-2 left-2 flex items-center gap-0.5 rounded-md bg-black/70 px-1.5 py-0.5 text-xs font-semibold backdrop-blur-sm', ratingColor)}>
+            <Star className="h-3 w-3 fill-current" />
+            {rating.toFixed(1)}
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="p-2">
+          <h3 className="text-sm font-medium leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+            {title}
+          </h3>
+          <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+            {year && <span>{year}</span>}
+            {itemGenres && itemGenres.length > 0 && (
+              <>
+                <span>·</span>
+                <span className="line-clamp-1">{itemGenres.join(', ')}</span>
+              </>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    </Link>
+  )
+}
+
+export const MovieCardSkeleton = () => (
+  <div className="rounded-lg overflow-hidden bg-card">
+    <Skeleton className="aspect-[2/3] w-full" />
+    <div className="p-2 space-y-1.5">
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-3 w-2/3" />
+    </div>
+  </div>
+)

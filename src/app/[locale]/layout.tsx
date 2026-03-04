@@ -5,6 +5,8 @@ import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { QueryProvider } from '@/providers/query-provider'
+import { Header } from '@/components/layout/header'
+import { Footer } from '@/components/layout/footer'
 import { routing } from '@/i18n/routing'
 import '../globals.css'
 
@@ -38,11 +40,15 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className="dark" suppressHydrationWarning>
-      <body className={`${geist.variable} font-sans antialiased min-h-screen`}>
+      <body className={`${geist.variable} font-sans antialiased min-h-screen flex flex-col`}>
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <TooltipProvider>
-              {children}
+              <Header />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
             </TooltipProvider>
           </QueryProvider>
         </NextIntlClientProvider>
