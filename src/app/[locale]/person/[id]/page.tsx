@@ -36,32 +36,47 @@ export default async function PersonPage({ params }: Props) {
   }
 
   const profileUrl = tmdbProfile(person.profile_path, 'lg')
-  // Combine crew (director/key roles first) + cast, deduplicated by movie id
-  const seenMovies = new Set<number>()
-  const movieCredits = [
-    ...(person.movie_credits?.crew?.filter((c) => c.job === 'Director') ?? []),
-    ...(person.movie_credits?.cast ?? []),
-    ...(person.movie_credits?.crew?.filter((c) => c.job !== 'Director') ?? []),
-  ]
+
+  // ── Movies: separate cast and crew ────────────────────────────────────────
+  const castMovies = (person.movie_credits?.cast ?? [])
+    .filter((m) => m.poster_path)
+    .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
+
+  const seenCrewMovies = new Set<number>()
+  const crewMovies = (person.movie_credits?.crew ?? [])
     .filter((m) => {
-      if (!m.poster_path || seenMovies.has(m.id)) return false
-      seenMovies.add(m.id)
+      if (!m.poster_path || seenCrewMovies.has(m.id)) return false
+      seenCrewMovies.add(m.id)
       return true
     })
     .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
 
-  const seenShows = new Set<number>()
-  const tvCredits = [
-    ...(person.tv_credits?.crew?.filter((c) => c.job === 'Director' || c.job === 'Series Director') ?? []),
-    ...(person.tv_credits?.cast ?? []),
-    ...(person.tv_credits?.crew?.filter((c) => c.job !== 'Director' && c.job !== 'Series Director') ?? []),
-  ]
+  const totalMovies = new Set([
+    ...castMovies.map((m) => m.id),
+    ...crewMovies.map((m) => m.id),
+  ]).size
+
+  // ── TV Shows: separate cast and crew ──────────────────────────────────────
+  const castShows = (person.tv_credits?.cast ?? [])
+    .filter((s) => s.poster_path)
+    .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
+
+  const seenCrewShows = new Set<number>()
+  const crewShows = (person.tv_credits?.crew ?? [])
     .filter((s) => {
-      if (!s.poster_path || seenShows.has(s.id)) return false
-      seenShows.add(s.id)
+      if (!s.poster_path || seenCrewShows.has(s.id)) return false
+      seenCrewShows.add(s.id)
       return true
     })
     .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
+
+  const totalShows = new Set([
+    ...castShows.map((s) => s.id),
+    ...crewShows.map((s) => s.id),
+  ]).size
+
+  const hasMovies = totalMovies > 0
+  const hasShows = totalShows > 0
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-10">
@@ -115,40 +130,84 @@ export default async function PersonPage({ params }: Props) {
       </div>
 
       {/* Filmography */}
-      {(movieCredits.length > 0 || tvCredits.length > 0) && (
+      {(hasMovies || hasShows) && (
         <div className="mt-12">
           <h2 className="text-xl font-bold mb-4">{t('filmography')}</h2>
-          <Tabs defaultValue="movies">
-            <TabsList className="mb-4">
-              {movieCredits.length > 0 && (
-                <TabsTrigger value="movies">{t('movies')} ({movieCredits.length})</TabsTrigger>
+          <Tabs defaultValue={hasMovies ? 'movies' : 'shows'}>
+            <TabsList className="mb-6">
+              {hasMovies && (
+                <TabsTrigger value="movies">{t('movies')} ({totalMovies})</TabsTrigger>
               )}
-              {tvCredits.length > 0 && (
-                <TabsTrigger value="shows">{t('shows')} ({tvCredits.length})</TabsTrigger>
+              {hasShows && (
+                <TabsTrigger value="shows">{t('shows')} ({totalShows})</TabsTrigger>
               )}
             </TabsList>
 
-            {movieCredits.length > 0 && (
-              <TabsContent value="movies">
-                <HorizontalScroll>
-                  {movieCredits.map((item) => (
-                    <div key={item.id} className="w-[160px] shrink-0">
-                      <MovieCard item={item} mediaType="movie" />
-                    </div>
-                  ))}
-                </HorizontalScroll>
+            {/* Movies tab */}
+            {hasMovies && (
+              <TabsContent value="movies" className="space-y-8">
+                {castMovies.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                      {t('asActor')}
+                    </h3>
+                    <HorizontalScroll>
+                      {castMovies.map((item) => (
+                        <div key={item.id} className="w-[160px] shrink-0">
+                          <MovieCard item={item} mediaType="movie" />
+                        </div>
+                      ))}
+                    </HorizontalScroll>
+                  </div>
+                )}
+                {crewMovies.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                      {t('asCrew')}
+                    </h3>
+                    <HorizontalScroll>
+                      {crewMovies.map((item) => (
+                        <div key={item.id} className="w-[160px] shrink-0">
+                          <MovieCard item={item} mediaType="movie" />
+                        </div>
+                      ))}
+                    </HorizontalScroll>
+                  </div>
+                )}
               </TabsContent>
             )}
 
-            {tvCredits.length > 0 && (
-              <TabsContent value="shows">
-                <HorizontalScroll>
-                  {tvCredits.map((item) => (
-                    <div key={item.id} className="w-[160px] shrink-0">
-                      <MovieCard item={item} mediaType="tv" />
-                    </div>
-                  ))}
-                </HorizontalScroll>
+            {/* TV Shows tab */}
+            {hasShows && (
+              <TabsContent value="shows" className="space-y-8">
+                {castShows.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                      {t('asActor')}
+                    </h3>
+                    <HorizontalScroll>
+                      {castShows.map((item) => (
+                        <div key={item.id} className="w-[160px] shrink-0">
+                          <MovieCard item={item} mediaType="tv" />
+                        </div>
+                      ))}
+                    </HorizontalScroll>
+                  </div>
+                )}
+                {crewShows.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                      {t('asCrew')}
+                    </h3>
+                    <HorizontalScroll>
+                      {crewShows.map((item) => (
+                        <div key={item.id} className="w-[160px] shrink-0">
+                          <MovieCard item={item} mediaType="tv" />
+                        </div>
+                      ))}
+                    </HorizontalScroll>
+                  </div>
+                )}
               </TabsContent>
             )}
           </Tabs>

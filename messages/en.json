@@ -69,7 +69,9 @@
     "movies": "Movies",
     "shows": "TV Shows",
     "filmography": "Filmography",
-    "knownFor": "Known For"
+    "knownFor": "Known For",
+    "asActor": "Acting Roles",
+    "asCrew": "Director / Writer / Other"
   },
   "search": {
     "placeholder": "Search movies, TV shows, people...",
