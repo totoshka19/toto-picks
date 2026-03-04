@@ -49,7 +49,6 @@ export default async function PersonPage({ params }: Props) {
       return true
     })
     .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
-    .slice(0, 40)
 
   const seenShows = new Set<number>()
   const tvCredits = [
@@ -63,7 +62,6 @@ export default async function PersonPage({ params }: Props) {
       return true
     })
     .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
-    .slice(0, 40)
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-10">
