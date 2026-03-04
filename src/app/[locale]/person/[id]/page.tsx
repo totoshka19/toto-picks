@@ -36,14 +36,34 @@ export default async function PersonPage({ params }: Props) {
   }
 
   const profileUrl = tmdbProfile(person.profile_path, 'lg')
-  const movieCredits = person.movie_credits?.cast
-    ?.filter((m) => m.poster_path)
+  // Combine crew (director/key roles first) + cast, deduplicated by movie id
+  const seenMovies = new Set<number>()
+  const movieCredits = [
+    ...(person.movie_credits?.crew?.filter((c) => c.job === 'Director') ?? []),
+    ...(person.movie_credits?.cast ?? []),
+    ...(person.movie_credits?.crew?.filter((c) => c.job !== 'Director') ?? []),
+  ]
+    .filter((m) => {
+      if (!m.poster_path || seenMovies.has(m.id)) return false
+      seenMovies.add(m.id)
+      return true
+    })
     .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
-    .slice(0, 20) ?? []
-  const tvCredits = person.tv_credits?.cast
-    ?.filter((s) => s.poster_path)
+    .slice(0, 40)
+
+  const seenShows = new Set<number>()
+  const tvCredits = [
+    ...(person.tv_credits?.crew?.filter((c) => c.job === 'Director' || c.job === 'Series Director') ?? []),
+    ...(person.tv_credits?.cast ?? []),
+    ...(person.tv_credits?.crew?.filter((c) => c.job !== 'Director' && c.job !== 'Series Director') ?? []),
+  ]
+    .filter((s) => {
+      if (!s.poster_path || seenShows.has(s.id)) return false
+      seenShows.add(s.id)
+      return true
+    })
     .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
-    .slice(0, 20) ?? []
+    .slice(0, 40)
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-10">
@@ -114,7 +134,7 @@ export default async function PersonPage({ params }: Props) {
               <TabsContent value="movies">
                 <HorizontalScroll>
                   {movieCredits.map((item) => (
-                    <div key={`${item.id}-${item.character}`} className="w-[160px] shrink-0">
+                    <div key={item.id} className="w-[160px] shrink-0">
                       <MovieCard item={item} mediaType="movie" />
                     </div>
                   ))}
@@ -126,7 +146,7 @@ export default async function PersonPage({ params }: Props) {
               <TabsContent value="shows">
                 <HorizontalScroll>
                   {tvCredits.map((item) => (
-                    <div key={`${item.id}-${item.character}`} className="w-[160px] shrink-0">
+                    <div key={item.id} className="w-[160px] shrink-0">
                       <MovieCard item={item} mediaType="tv" />
                     </div>
                   ))}
