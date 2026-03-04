@@ -1,0 +1,123 @@
+{
+  "nav": {
+    "home": "Главная",
+    "movies": "Фильмы",
+    "shows": "Сериалы",
+    "favorites": "Избранное",
+    "search": "Поиск"
+  },
+  "filters": {
+    "title": "Фильтры",
+    "genres": "Жанры",
+    "country": "Страна",
+    "year": "Год",
+    "yearFrom": "С",
+    "yearTo": "По",
+    "rating": "Рейтинг",
+    "votes": "Минимум голосов",
+    "actor": "Актёр",
+    "actorPlaceholder": "Поиск актёра...",
+    "director": "Режиссёр",
+    "directorPlaceholder": "Поиск режиссёра...",
+    "sort": "Сортировка",
+    "apply": "Применить",
+    "reset": "Сбросить",
+    "openFilters": "Фильтры",
+    "any": "Любое"
+  },
+  "sort": {
+    "popularityDesc": "По популярности ↓",
+    "popularityAsc": "По популярности ↑",
+    "ratingDesc": "По рейтингу ↓",
+    "ratingAsc": "По рейтингу ↑",
+    "releaseDateDesc": "Сначала новые",
+    "releaseDateAsc": "Сначала старые",
+    "voteCountDesc": "По количеству голосов"
+  },
+  "movie": {
+    "rating": "Рейтинг",
+    "year": "Год",
+    "duration": "мин.",
+    "country": "Страна",
+    "director": "Режиссёр",
+    "cast": "В ролях",
+    "similar": "Похожие фильмы",
+    "details": "Детали",
+    "budget": "Бюджет",
+    "revenue": "Сборы",
+    "studio": "Студия",
+    "status": "Статус",
+    "addFavorite": "В избранное",
+    "removeFavorite": "Убрать из избранного",
+    "watchTrailer": "Смотреть трейлер",
+    "moreInfo": "Подробнее"
+  },
+  "show": {
+    "seasons": "Сезоны",
+    "season": "Сезон",
+    "episodes": "эп.",
+    "status": "Статус",
+    "ongoing": "Выходит",
+    "ended": "Завершён",
+    "similar": "Похожие сериалы",
+    "cast": "В ролях"
+  },
+  "person": {
+    "biography": "Биография",
+    "born": "Родился",
+    "birthplace": "Место рождения",
+    "movies": "Фильмы",
+    "shows": "Сериалы",
+    "filmography": "Фильмография",
+    "knownFor": "Известен по"
+  },
+  "search": {
+    "placeholder": "Поиск фильмов, сериалов, актёров...",
+    "all": "Все",
+    "movies": "Фильмы",
+    "shows": "Сериалы",
+    "people": "Люди",
+    "noResults": "Ничего не найдено",
+    "noResultsDesc": "Попробуйте изменить запрос"
+  },
+  "favorites": {
+    "title": "Избранное",
+    "empty": "Ваш список избранного пуст",
+    "emptyDesc": "Добавляйте фильмы и сериалы, нажимая на значок закладки",
+    "movies": "Фильмы",
+    "shows": "Сериалы",
+    "remove": "Удалить"
+  },
+  "home": {
+    "trending": "В тренде сейчас",
+    "newReleases": "Новинки кино",
+    "popularShows": "Популярные сериалы",
+    "genres": "По жанрам",
+    "viewAll": "Смотреть все"
+  },
+  "catalog": {
+    "movies": "Фильмы",
+    "shows": "Сериалы",
+    "results": "Результаты",
+    "noResults": "По вашим фильтрам ничего не найдено",
+    "noResultsDesc": "Попробуйте изменить параметры фильтрации"
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Произошла ошибка",
+    "retry": "Попробовать снова",
+    "viewAll": "Смотреть все",
+    "page": "Страница",
+    "of": "из",
+    "previous": "Назад",
+    "next": "Вперёд",
+    "close": "Закрыть",
+    "back": "Назад",
+    "noImage": "Нет фото"
+  },
+  "footer": {
+    "copyright": "© 2026 toto-picks",
+    "tmdbCredit": "Данные предоставлены",
+    "tmdbName": "The Movie Database (TMDB)"
+  }
+}

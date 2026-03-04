@@ -1,0 +1,123 @@
+{
+  "nav": {
+    "home": "Home",
+    "movies": "Movies",
+    "shows": "TV Shows",
+    "favorites": "Favorites",
+    "search": "Search"
+  },
+  "filters": {
+    "title": "Filters",
+    "genres": "Genres",
+    "country": "Country",
+    "year": "Year",
+    "yearFrom": "From",
+    "yearTo": "To",
+    "rating": "Rating",
+    "votes": "Minimum votes",
+    "actor": "Actor",
+    "actorPlaceholder": "Search for an actor...",
+    "director": "Director",
+    "directorPlaceholder": "Search for a director...",
+    "sort": "Sort by",
+    "apply": "Apply",
+    "reset": "Reset",
+    "openFilters": "Filters",
+    "any": "Any"
+  },
+  "sort": {
+    "popularityDesc": "Most popular",
+    "popularityAsc": "Least popular",
+    "ratingDesc": "Highest rated",
+    "ratingAsc": "Lowest rated",
+    "releaseDateDesc": "Newest first",
+    "releaseDateAsc": "Oldest first",
+    "voteCountDesc": "Most voted"
+  },
+  "movie": {
+    "rating": "Rating",
+    "year": "Year",
+    "duration": "min.",
+    "country": "Country",
+    "director": "Director",
+    "cast": "Cast",
+    "similar": "Similar Movies",
+    "details": "Details",
+    "budget": "Budget",
+    "revenue": "Revenue",
+    "studio": "Studio",
+    "status": "Status",
+    "addFavorite": "Add to Favorites",
+    "removeFavorite": "Remove from Favorites",
+    "watchTrailer": "Watch Trailer",
+    "moreInfo": "More Info"
+  },
+  "show": {
+    "seasons": "Seasons",
+    "season": "Season",
+    "episodes": "ep.",
+    "status": "Status",
+    "ongoing": "Ongoing",
+    "ended": "Ended",
+    "similar": "Similar Shows",
+    "cast": "Cast"
+  },
+  "person": {
+    "biography": "Biography",
+    "born": "Born",
+    "birthplace": "Place of Birth",
+    "movies": "Movies",
+    "shows": "TV Shows",
+    "filmography": "Filmography",
+    "knownFor": "Known For"
+  },
+  "search": {
+    "placeholder": "Search movies, TV shows, people...",
+    "all": "All",
+    "movies": "Movies",
+    "shows": "TV Shows",
+    "people": "People",
+    "noResults": "No results found",
+    "noResultsDesc": "Try adjusting your search query"
+  },
+  "favorites": {
+    "title": "Favorites",
+    "empty": "Your favorites list is empty",
+    "emptyDesc": "Add movies and TV shows by clicking the bookmark icon",
+    "movies": "Movies",
+    "shows": "TV Shows",
+    "remove": "Remove"
+  },
+  "home": {
+    "trending": "Trending Now",
+    "newReleases": "New Releases",
+    "popularShows": "Popular TV Shows",
+    "genres": "By Genre",
+    "viewAll": "View All"
+  },
+  "catalog": {
+    "movies": "Movies",
+    "shows": "TV Shows",
+    "results": "Results",
+    "noResults": "No results match your filters",
+    "noResultsDesc": "Try adjusting your filter settings"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "viewAll": "View All",
+    "page": "Page",
+    "of": "of",
+    "previous": "Previous",
+    "next": "Next",
+    "close": "Close",
+    "back": "Back",
+    "noImage": "No image"
+  },
+  "footer": {
+    "copyright": "© 2026 toto-picks",
+    "tmdbCredit": "Data provided by",
+    "tmdbName": "The Movie Database (TMDB)"
+  }
+}
