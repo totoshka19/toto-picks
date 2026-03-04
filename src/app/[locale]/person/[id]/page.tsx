@@ -38,8 +38,13 @@ export default async function PersonPage({ params }: Props) {
   const profileUrl = tmdbProfile(person.profile_path, 'lg')
 
   // ── Movies: separate cast and crew ────────────────────────────────────────
+  const seenCastMovies = new Set<number>()
   const castMovies = (person.movie_credits?.cast ?? [])
-    .filter((m) => m.poster_path)
+    .filter((m) => {
+      if (!m.poster_path || seenCastMovies.has(m.id)) return false
+      seenCastMovies.add(m.id)
+      return true
+    })
     .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
 
   const seenCrewMovies = new Set<number>()
@@ -57,8 +62,13 @@ export default async function PersonPage({ params }: Props) {
   ]).size
 
   // ── TV Shows: separate cast and crew ──────────────────────────────────────
+  const seenCastShows = new Set<number>()
   const castShows = (person.tv_credits?.cast ?? [])
-    .filter((s) => s.poster_path)
+    .filter((s) => {
+      if (!s.poster_path || seenCastShows.has(s.id)) return false
+      seenCastShows.add(s.id)
+      return true
+    })
     .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
 
   const seenCrewShows = new Set<number>()
