@@ -188,6 +188,12 @@ export interface VideoResults {
   results: Video[]
 }
 
+// Standalone response from /person/{id}/movie_credits
+export interface MovieCreditsResponse {
+  cast: (Movie & { character: string; order: number })[]
+  crew: (Movie & { job: string; department: string })[]
+}
+
 // Person types
 export interface Person {
   id: number
@@ -211,10 +217,7 @@ export interface PersonDetail {
   homepage: string | null
   imdb_id: string | null
   also_known_as: string[]
-  movie_credits: {
-    cast: (Movie & { character: string; order: number })[]
-    crew: (Movie & { job: string; department: string })[]
-  }
+  movie_credits: MovieCreditsResponse
   tv_credits: {
     cast: (TVShow & { character: string })[]
     crew: (TVShow & { job: string; department: string })[]

@@ -6,6 +6,7 @@ import type {
   TVShowDetail,
   Person,
   PersonDetail,
+  MovieCreditsResponse,
   MultiSearchResult,
   Genre,
   DiscoverMovieFilters,
@@ -164,6 +165,10 @@ export const tmdbPerson = {
       { append_to_response: 'movie_credits,tv_credits' },
       locale
     ),
+
+  // Full filmography — more complete than /discover?with_crew
+  movieCredits: (id: number, locale = 'ru') =>
+    fetchTMDB<MovieCreditsResponse>(`/person/${id}/movie_credits`, {}, locale),
 
   popular: (page = 1, locale = 'ru') =>
     fetchTMDB<TMDBResponse<Person>>('/person/popular', { page }, locale),
