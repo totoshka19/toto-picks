@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { motion } from 'motion/react'
@@ -27,7 +28,9 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
   const href = mediaType === 'movie' ? `/movie/${item.id}` : `/show/${item.id}`
 
   const { add, remove, has } = useFavoritesStore()
-  const isFavorite = has(item.id, mediaType)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const isFavorite = mounted && has(item.id, mediaType)
 
   const itemGenres = genres
     ? item.genre_ids?.slice(0, 2).map((id) => genres.find((g) => g.id === id)?.name).filter(Boolean)

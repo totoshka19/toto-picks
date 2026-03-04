@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -10,7 +11,9 @@ import type { FavoriteItem } from '@/types/app'
 export const FavoriteButton = ({ item }: { item: FavoriteItem }) => {
   const t = useTranslations('movie')
   const { add, remove, has } = useFavoritesStore()
-  const isFavorite = has(item.id, item.mediaType)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const isFavorite = mounted && has(item.id, item.mediaType)
 
   const toggle = () => {
     isFavorite ? remove(item.id, item.mediaType) : add(item)
