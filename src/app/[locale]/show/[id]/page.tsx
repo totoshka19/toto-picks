@@ -2,7 +2,7 @@ import { getLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
-import { tmdbShows, tmdbPoster, tmdbBackdrop, tmdbImage } from '@/lib/tmdb'
+import { tmdbShows, tmdbGenres, tmdbPoster, tmdbBackdrop, tmdbImage } from '@/lib/tmdb'
 import { RatingBadge } from '@/components/rating-badge'
 import { HorizontalScroll } from '@/components/horizontal-scroll'
 import { PersonCard } from '@/components/cards/person-card'
@@ -38,8 +38,12 @@ export default async function ShowPage({ params }: Props) {
   const tMovie = await getTranslations('movie')
 
   let show
+  let tvGenres
   try {
-    show = await tmdbShows.detail(Number(id), locale)
+    ;[show, tvGenres] = await Promise.all([
+      tmdbShows.detail(Number(id), locale),
+      tmdbGenres.shows(locale),
+    ])
   } catch {
     notFound()
   }
@@ -184,7 +188,7 @@ export default async function ShowPage({ params }: Props) {
             <HorizontalScroll>
               {show.similar.results.slice(0, 12).map((item) => (
                 <div key={item.id} className="w-[160px] shrink-0">
-                  <MovieCard item={item} mediaType="tv" />
+                  <MovieCard item={item} mediaType="tv" genres={tvGenres.genres} />
                 </div>
               ))}
             </HorizontalScroll>
