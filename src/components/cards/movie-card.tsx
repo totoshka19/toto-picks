@@ -1,7 +1,30 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import React from 'react'
 import Image from 'next/image'
+
+type FlagModule = Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>>
+let flagModuleCache: FlagModule | null = null
+
+const useFlagComponent = (code: string | undefined) => {
+  const [Flag, setFlag] = useState<React.ComponentType<React.SVGProps<SVGSVGElement>> | null>(null)
+  useEffect(() => {
+    if (!code) { setFlag(null); return }
+    const upper = code.toUpperCase()
+    if (flagModuleCache) {
+      setFlag(() => flagModuleCache![upper] ?? null)
+      return
+    }
+    import('country-flag-icons/react/3x2')
+      .then((mod) => {
+        flagModuleCache = mod as unknown as FlagModule
+        setFlag(() => flagModuleCache![upper] ?? null)
+      })
+      .catch(() => setFlag(null))
+  }, [code])
+  return Flag
+}
 import { Link } from '@/i18n/navigation'
 import { Heart, Star, Eye, Users } from 'lucide-react'
 import { cn, formatVotes } from '@/lib/utils'
@@ -33,6 +56,9 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
   useEffect(() => setMounted(true), [])
   const isFavorite = mounted && favorites.has(item.id, mediaType)
   const isWatched = mounted && watchedStore.has(item.id, mediaType)
+
+  const countryCode = !isMovie(item) ? item.origin_country?.[0] : undefined
+  const Flag = useFlagComponent(countryCode)
 
   const itemGenres = genres
     ? item.genre_ids?.slice(0, 2).map((id) => genres.find((g) => g.id === id)?.name).filter(Boolean)
@@ -146,6 +172,7 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
             {title}
           </h3>
           <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+            {Flag && <Flag className="h-3 w-auto rounded-[1px] shrink-0" />}
             {year && <span>{year}</span>}
             {itemGenres && itemGenres.length > 0 && (
               <>

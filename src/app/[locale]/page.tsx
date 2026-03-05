@@ -78,6 +78,7 @@ export default async function HomePage() {
           items={trendingShows.results.filter((s) => !heroShowIds.has(s.id)).slice(0, 12)}
           mediaType="tv"
           viewAllHref="/shows"
+          genres={tvGenres.genres}
         />
       </div>
     </div>
