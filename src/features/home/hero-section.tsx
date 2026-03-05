@@ -214,18 +214,20 @@ export const HeroSection = ({ items }: HeroSectionProps) => {
       </button>
 
       {/* Dot indicators */}
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex">
         {items.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrentIndex(i)}
             aria-label={`Slide ${i + 1}`}
-            className={`rounded-full transition-all duration-300 ${
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center"
+          >
+            <span className={`rounded-full transition-all duration-300 block ${
               i === currentIndex
                 ? 'w-6 h-1.5 bg-primary'
                 : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
-            }`}
-          />
+            }`} />
+          </button>
         ))}
       </div>
     </section>
