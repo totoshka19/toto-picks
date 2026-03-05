@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { RatingBadge } from '@/components/rating-badge'
 import { tmdbBackdrop } from '@/lib/tmdb'
 import type { HeroItem } from '@/types/tmdb'
-import Flags from 'country-flag-icons/react/3x2'
+import * as Flags from 'country-flag-icons/react/3x2'
 
 const DRAG_THRESHOLD = 50
 
