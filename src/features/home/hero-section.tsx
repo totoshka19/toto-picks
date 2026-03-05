@@ -220,7 +220,7 @@ export const HeroSection = ({ items }: HeroSectionProps) => {
             key={i}
             onClick={() => setCurrentIndex(i)}
             aria-label={`Slide ${i + 1}`}
-            className="min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="min-h-[44px] px-1.5 flex items-center justify-center"
           >
             <span className={`rounded-full transition-all duration-300 block ${
               i === currentIndex
