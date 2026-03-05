@@ -147,7 +147,6 @@ export const HeroSection = ({ items }: HeroSectionProps) => {
                   {formatVotes(item.vote_count)} {t('votes')}
                 </span>
               )}
-              {item.year && <span>{item.year}</span>}
               {item.origin_country?.[0] && (() => {
                 const code = item.origin_country![0].toUpperCase() as keyof typeof Flags
                 const Flag = Flags[code]
@@ -158,6 +157,7 @@ export const HeroSection = ({ items }: HeroSectionProps) => {
                   </span>
                 )
               })()}
+              {item.year && <span>{item.year}</span>}
             </div>
 
             <p className="text-sm md:text-base text-muted-foreground line-clamp-3 mb-6">
