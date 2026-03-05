@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
-import { motion } from 'motion/react'
 import { Heart, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { tmdbPoster } from '@/lib/tmdb'
@@ -60,11 +59,7 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
 
   return (
     <Link href={href} className="group block">
-      <motion.div
-        className="relative overflow-hidden rounded-lg bg-card"
-        whileHover={{ y: -4 }}
-        transition={{ duration: 0.2 }}
-      >
+      <div className="relative overflow-hidden rounded-lg bg-card">
         {/* Poster */}
         <div className="relative aspect-[2/3] overflow-hidden bg-muted">
           {posterUrl ? (
@@ -82,14 +77,12 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
           )}
 
           {/* Hover overlay */}
-          <motion.div
-            className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-          >
+          <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <div className={cn('flex items-center gap-1 text-lg font-bold', ratingColor)}>
               <Star className="h-5 w-5 fill-current" />
               {rating.toFixed(1)}
             </div>
-          </motion.div>
+          </div>
 
           {/* Favorite button */}
           <button
@@ -128,7 +121,7 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
             )}
           </div>
         </div>
-      </motion.div>
+      </div>
     </Link>
   )
 }
