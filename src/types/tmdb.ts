@@ -45,6 +45,7 @@ export interface Movie {
   popularity: number
   adult: boolean
   original_language: string
+  origin_country?: string[]
   video: boolean
 }
 

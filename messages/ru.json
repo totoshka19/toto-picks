@@ -50,7 +50,8 @@
     "addFavorite": "В избранное",
     "removeFavorite": "Убрать из избранного",
     "watchTrailer": "Смотреть трейлер",
-    "moreInfo": "Подробнее"
+    "moreInfo": "Подробнее",
+    "votes": "оценок"
   },
   "show": {
     "seasons": "Сезоны",

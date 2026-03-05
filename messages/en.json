@@ -50,7 +50,8 @@
     "addFavorite": "Add to Favorites",
     "removeFavorite": "Remove from Favorites",
     "watchTrailer": "Watch Trailer",
-    "moreInfo": "More Info"
+    "moreInfo": "More Info",
+    "votes": "votes"
   },
   "show": {
     "seasons": "Seasons",

@@ -5,13 +5,22 @@ import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { AnimatePresence, motion } from 'motion/react'
-import { Info, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Info, ChevronLeft, ChevronRight, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { RatingBadge } from '@/components/rating-badge'
 import { tmdbBackdrop } from '@/lib/tmdb'
 import type { Movie } from '@/types/tmdb'
 
 const DRAG_THRESHOLD = 50
+
+const countryFlag = (code: string) =>
+  [...code.toUpperCase()].map((c) => String.fromCodePoint(0x1F1E6 - 65 + c.codePointAt(0)!)).join('')
+
+const formatVotes = (n: number) => {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`
+  return String(n)
+}
 
 interface HeroSectionProps {
   movies: Movie[]
@@ -127,9 +136,18 @@ export const HeroSection = ({ movies, genres }: HeroSectionProps) => {
               {movie.title}
             </h1>
 
-            <div className="flex items-center gap-3 mb-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-3 mb-4 text-sm text-muted-foreground flex-wrap">
               <RatingBadge rating={movie.vote_average} size="md" />
+              {movie.vote_count > 0 && (
+                <span className="flex items-center gap-1">
+                  <Users className="h-3.5 w-3.5" />
+                  {formatVotes(movie.vote_count)} {t('votes')}
+                </span>
+              )}
               {year && <span>{year}</span>}
+              {movie.origin_country?.[0] && (
+                <span>{countryFlag(movie.origin_country[0])}</span>
+              )}
             </div>
 
             <p className="text-sm md:text-base text-muted-foreground line-clamp-3 mb-6">
