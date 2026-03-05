@@ -59,6 +59,7 @@ export const HeroSection = ({ items }: HeroSectionProps) => {
   const [isPaused, setIsPaused] = useState(false)
   const dragStartX = useRef<number | null>(null)
   const didDrag = useRef(false)
+  const isFirstRender = useRef(true)
 
   const item = items[currentIndex]
   const Flag = useFlagComponent(item.origin_country?.[0])
@@ -70,6 +71,10 @@ export const HeroSection = ({ items }: HeroSectionProps) => {
   const goPrev = useCallback(() => {
     setCurrentIndex((i) => (i - 1 + items.length) % items.length)
   }, [items.length])
+
+  useEffect(() => {
+    isFirstRender.current = false
+  }, [])
 
   useEffect(() => {
     if (isPaused) return
@@ -110,7 +115,7 @@ export const HeroSection = ({ items }: HeroSectionProps) => {
         <motion.div
           key={item.id}
           className="absolute inset-0"
-          initial={{ opacity: 0 }}
+          initial={isFirstRender.current ? { opacity: 1 } : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.7 }}
@@ -121,6 +126,7 @@ export const HeroSection = ({ items }: HeroSectionProps) => {
               alt={item.title}
               fill
               priority
+              unoptimized
               className="object-cover"
               sizes="100vw"
             />
