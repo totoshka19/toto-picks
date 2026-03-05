@@ -40,6 +40,9 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className="dark" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://image.tmdb.org" />
+      </head>
       <body className={`${geist.variable} font-sans antialiased min-h-screen flex flex-col`}>
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>

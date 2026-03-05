@@ -1,6 +1,5 @@
-import { preload } from 'react-dom'
 import { getLocale } from 'next-intl/server'
-import { tmdbMovies, tmdbShows, tmdbGenres, tmdbBackdrop } from '@/lib/tmdb'
+import { tmdbMovies, tmdbShows, tmdbGenres } from '@/lib/tmdb'
 import { HeroSection } from '@/features/home/hero-section'
 import { SectionRow } from '@/features/home/section-row'
 import type { Movie, TVShow, HeroItem, Genre } from '@/types/tmdb'
@@ -51,11 +50,6 @@ export default async function HomePage() {
   const movies5 = trending.results.slice(0, 5).map((m) => toHeroMovie(m, movieGenres.genres))
   const shows5 = trendingShows.results.slice(0, 5).map((s) => toHeroShow(s, tvGenres.genres))
   const heroItems: HeroItem[] = movies5.flatMap((m, i) => shows5[i] ? [m, shows5[i]] : [m])
-
-  const firstBackdropUrl = tmdbBackdrop(heroItems[0]?.backdrop_path, 'lg')
-  if (firstBackdropUrl) {
-    preload(firstBackdropUrl, { as: 'image', fetchPriority: 'high' })
-  }
 
   return (
     <div className="space-y-12 pb-16">
