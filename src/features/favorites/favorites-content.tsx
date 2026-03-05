@@ -1,32 +1,57 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { useQueries } from '@tanstack/react-query'
 import { useFavoritesStore } from '@/store/favorites'
 import { MovieCard } from '@/components/cards/movie-card'
 import { EmptyState } from '@/components/empty-state'
 import { Heart } from 'lucide-react'
-import type { Movie, TVShow } from '@/types/tmdb'
+import { tmdbMovies, tmdbShows } from '@/lib/tmdb'
+import type { Movie, TVShow, Genre } from '@/types/tmdb'
 
-export const FavoritesContent = () => {
+interface Props {
+  movieGenres: Genre[]
+  tvGenres: Genre[]
+}
+
+export const FavoritesContent = ({ movieGenres, tvGenres }: Props) => {
   const t = useTranslations('favorites')
+  const locale = useLocale()
   const items = useFavoritesStore((s) => s.items)
 
-  const toMovieItem = (item: typeof items[number]): Movie | TVShow => ({
-    id: item.id,
-    ...(item.mediaType === 'movie'
-      ? { title: item.title, original_title: item.title, release_date: item.releaseDate }
-      : { name: item.title, original_name: item.title, first_air_date: item.releaseDate, origin_country: [] }),
-    overview: '',
-    poster_path: item.posterPath,
-    backdrop_path: null,
-    vote_average: item.voteAverage,
-    vote_count: 0,
-    genre_ids: item.genreIds,
-    popularity: 0,
-    original_language: '',
-    adult: false,
-    video: false,
-  } as Movie | TVShow)
+  const metaQueries = useQueries({
+    queries: items.map((item) => ({
+      queryKey: ['item-meta', item.mediaType, item.id, locale],
+      queryFn: () => item.mediaType === 'movie'
+        ? tmdbMovies.meta(item.id, locale)
+        : tmdbShows.meta(item.id, locale),
+      staleTime: 10 * 60 * 1000,
+    })),
+  })
+
+  const metaMap = new Map(
+    items.map((item, i) => [`${item.mediaType}-${item.id}`, metaQueries[i]?.data])
+  )
+
+  const toMovieItem = (item: typeof items[number]): Movie | TVShow => {
+    const meta = metaMap.get(`${item.mediaType}-${item.id}`)
+    return ({
+      id: item.id,
+      ...(item.mediaType === 'movie'
+        ? { title: item.title, original_title: item.title, release_date: item.releaseDate }
+        : { name: item.title, original_name: item.title, first_air_date: item.releaseDate, origin_country: meta?.origin_country ?? item.originCountry ?? [] }),
+      overview: '',
+      poster_path: item.posterPath,
+      backdrop_path: null,
+      vote_average: item.voteAverage,
+      vote_count: meta?.vote_count ?? item.voteCount ?? 0,
+      genre_ids: item.genreIds,
+      popularity: 0,
+      original_language: '',
+      adult: false,
+      video: false,
+    } as Movie | TVShow)
+  }
 
   const movies = items.filter((i) => i.mediaType === 'movie')
   const shows = items.filter((i) => i.mediaType === 'tv')
@@ -55,7 +80,7 @@ export const FavoritesContent = () => {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
             {movies.map((item) => (
-              <MovieCard key={item.id} item={toMovieItem(item)} mediaType="movie" />
+              <MovieCard key={item.id} item={toMovieItem(item)} mediaType="movie" genres={movieGenres} />
             ))}
           </div>
         </section>
@@ -68,7 +93,7 @@ export const FavoritesContent = () => {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
             {shows.map((item) => (
-              <MovieCard key={item.id} item={toMovieItem(item)} mediaType="tv" />
+              <MovieCard key={item.id} item={toMovieItem(item)} mediaType="tv" genres={tvGenres} />
             ))}
           </div>
         </section>

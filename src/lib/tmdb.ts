@@ -102,6 +102,9 @@ export const tmdbMovies = {
       { append_to_response: 'credits,similar,videos' },
       locale
     ),
+
+  meta: (id: number, locale = 'ru') =>
+    fetchTMDB<{ vote_count: number; origin_country?: string[] }>(`/movie/${id}`, {}, locale),
 }
 
 // ─── TV Shows ────────────────────────────────────────────────────────────────
@@ -128,6 +131,9 @@ export const tmdbShows = {
       { append_to_response: 'credits,similar,videos' },
       locale
     ),
+
+  meta: (id: number, locale = 'ru') =>
+    fetchTMDB<{ vote_count: number; origin_country: string[] }>(`/tv/${id}`, {}, locale),
 }
 
 // ─── Genres ──────────────────────────────────────────────────────────────────

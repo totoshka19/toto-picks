@@ -8,8 +8,10 @@ export interface FavoriteItem {
   title: string
   posterPath: string | null
   voteAverage: number
+  voteCount: number
   releaseDate: string
   genreIds: number[]
+  originCountry: string[]
 }
 
 export interface SortOption {
