@@ -107,6 +107,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  button, [role="button"] {
+    cursor: pointer;
+  }
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
