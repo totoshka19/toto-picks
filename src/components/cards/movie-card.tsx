@@ -91,20 +91,23 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
             </div>
           )}
 
+          {/* Hover overlay */}
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
+
           {/* Action buttons (watched + favorite) */}
-          <div className="absolute top-2 right-2 flex flex-col gap-1.5">
+          <div className="absolute top-2 right-2 flex flex-row gap-1.5">
             <button
               onClick={toggleWatched}
               className={cn(
                 'rounded-full p-1.5 backdrop-blur-sm transition-all',
                 'opacity-0 group-hover:opacity-100',
                 isWatched
-                  ? 'bg-blue-500/90 text-white opacity-100'
-                  : 'bg-black/50 text-white hover:bg-blue-500/90'
+                  ? 'bg-primary text-primary-foreground opacity-100'
+                  : 'bg-black/50 text-white hover:text-primary'
               )}
               aria-label={isWatched ? 'Remove from watched' : 'Mark as watched'}
             >
-              <Eye className={cn('h-4 w-4', isWatched && 'fill-current')} />
+              <Eye className="h-4 w-4" />
             </button>
 
             <button
@@ -114,11 +117,11 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
                 'opacity-0 group-hover:opacity-100',
                 isFavorite
                   ? 'bg-primary text-primary-foreground opacity-100'
-                  : 'bg-black/50 text-white hover:bg-primary hover:text-primary-foreground'
+                  : 'bg-black/50 text-white hover:text-primary'
               )}
               aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
             >
-              <Heart className={cn('h-4 w-4', isFavorite && 'fill-current')} />
+              <Heart className="h-4 w-4" />
             </button>
           </div>
 
