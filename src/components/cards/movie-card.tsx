@@ -73,9 +73,7 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
     voteCount: item.vote_count,
     releaseDate: date ?? '',
     genreIds: item.genre_ids ?? [],
-    originCountry: isMovie(item)
-      ? (item.origin_country ? [item.origin_country] : [])
-      : (item.origin_country ?? []),
+    originCountry: item.origin_country ?? [],
   })
 
   const toggleFavorite = (e: React.MouseEvent) => {

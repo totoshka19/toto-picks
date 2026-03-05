@@ -86,6 +86,7 @@ export interface MovieDetail {
   tagline: string
   homepage: string | null
   imdb_id: string | null
+  origin_country?: string[]
   production_companies: ProductionCompany[]
   production_countries: ProductionCountry[]
   spoken_languages: SpokenLanguage[]

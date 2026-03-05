@@ -143,8 +143,10 @@ export default async function MoviePage({ params }: Props) {
                   title: movie.title,
                   posterPath: movie.poster_path,
                   voteAverage: movie.vote_average,
+                  voteCount: movie.vote_count,
                   releaseDate: movie.release_date,
                   genreIds: movie.genres?.map((g) => g.id) ?? [],
+                  originCountry: movie.origin_country ?? [],
                 }}
               />
             </div>

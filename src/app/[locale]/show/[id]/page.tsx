@@ -130,8 +130,10 @@ export default async function ShowPage({ params }: Props) {
                   title: show.name,
                   posterPath: show.poster_path,
                   voteAverage: show.vote_average,
+                  voteCount: show.vote_count,
                   releaseDate: show.first_air_date,
                   genreIds: show.genres?.map((g) => g.id) ?? [],
+                  originCountry: show.origin_country ?? [],
                 }}
               />
             </div>
