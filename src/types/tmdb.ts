@@ -30,6 +30,21 @@ export interface SpokenLanguage {
   name: string
 }
 
+// Normalized item for hero carousel (mix of movies and TV shows)
+export interface HeroItem {
+  id: number
+  title: string
+  overview: string
+  poster_path: string | null
+  backdrop_path: string | null
+  vote_average: number
+  vote_count: number
+  genre_names: string[]
+  origin_country?: string[]
+  year: number | null
+  media_type: 'movie' | 'tv'
+}
+
 // List item (used in discover, trending, search results)
 export interface Movie {
   id: number
