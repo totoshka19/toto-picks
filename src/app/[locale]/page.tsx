@@ -64,7 +64,7 @@ export default async function HomePage() {
     <div className="space-y-12 pb-16">
       <HeroSection items={heroItems} />
 
-      <div className="container mx-auto max-w-7xl px-4 space-y-12">
+      <div className="container mx-auto max-w-7xl px-4 min-[576px]:px-8 space-y-12">
         <SectionRow
           titleKey="newReleases"
           items={nowPlaying.results.filter((m) => !heroMovieIds.has(m.id)).slice(0, 12)}

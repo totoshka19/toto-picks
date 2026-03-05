@@ -135,7 +135,7 @@ export const HeroSection = ({ items }: HeroSectionProps) => {
       <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10" />
 
       {/* Content */}
-      <div className="relative z-20 h-full container mx-auto max-w-7xl px-4 flex items-end pb-16">
+      <div className="relative z-20 h-full container mx-auto max-w-7xl px-4 min-[576px]:px-8 flex items-end pb-16">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={item.id}

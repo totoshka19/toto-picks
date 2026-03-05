@@ -66,7 +66,7 @@ export default async function ShowPage({ params }: Props) {
         <div className="absolute inset-0 bg-gradient-to-r from-background/80 to-transparent" />
       </div>
 
-      <div className="container mx-auto max-w-7xl px-4 -mt-40 relative z-10">
+      <div className="container mx-auto max-w-7xl px-4 min-[576px]:px-8 -mt-40 relative z-10">
         <div className="flex flex-col md:flex-row gap-8">
           {posterUrl && (
             <div className="shrink-0 mx-auto md:mx-0">

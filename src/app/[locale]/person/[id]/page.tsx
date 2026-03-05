@@ -89,7 +89,7 @@ export default async function PersonPage({ params }: Props) {
   const hasShows = totalShows > 0
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-10">
+    <div className="container mx-auto max-w-5xl px-4 min-[576px]:px-8 py-10">
       <div className="flex flex-col md:flex-row gap-8">
         {/* Photo */}
         <div className="shrink-0 mx-auto md:mx-0">

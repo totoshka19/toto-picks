@@ -60,7 +60,7 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+      <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 min-[576px]:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
           <Film className="h-6 w-6" />

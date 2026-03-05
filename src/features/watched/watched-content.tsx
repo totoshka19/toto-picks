@@ -58,7 +58,7 @@ export const WatchedContent = ({ movieGenres, tvGenres }: Props) => {
 
   if (items.length === 0) {
     return (
-      <div className="container mx-auto max-w-7xl px-4 py-10">
+      <div className="container mx-auto max-w-7xl px-4 min-[576px]:px-8 py-10">
         <h1 className="text-2xl font-bold mb-8">{t('title')}</h1>
         <EmptyState
           title={t('empty')}
@@ -70,7 +70,7 @@ export const WatchedContent = ({ movieGenres, tvGenres }: Props) => {
   }
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-10 space-y-10">
+    <div className="container mx-auto max-w-7xl px-4 min-[576px]:px-8 py-10 space-y-10">
       <h1 className="text-2xl font-bold">{t('title')}</h1>
 
       {movies.length > 0 && (

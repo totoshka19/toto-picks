@@ -41,7 +41,7 @@ export const SearchContent = () => {
   const people = data?.results.filter(isPerson) ?? []
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-10 space-y-6">
+    <div className="container mx-auto max-w-5xl px-4 min-[576px]:px-8 py-10 space-y-6">
       {/* Search input */}
       <div className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />

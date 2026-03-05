@@ -8,7 +8,7 @@ export const Footer = () => {
 
   return (
     <footer className="mt-auto border-t border-border/50 bg-card/50">
-      <div className="container mx-auto max-w-7xl px-4 py-8">
+      <div className="container mx-auto max-w-7xl px-4 min-[576px]:px-8 py-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <Link href="/" className="flex items-center gap-2 font-bold text-lg text-primary">
             <Film className="h-5 w-5" />
