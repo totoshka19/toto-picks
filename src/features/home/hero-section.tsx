@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { useTranslations, useLocale } from 'next-intl'
@@ -10,9 +10,29 @@ import { Button } from '@/components/ui/button'
 import { RatingBadge } from '@/components/rating-badge'
 import { tmdbBackdrop } from '@/lib/tmdb'
 import type { HeroItem } from '@/types/tmdb'
-import * as Flags from 'country-flag-icons/react/3x2'
-
 const DRAG_THRESHOLD = 50
+
+type FlagModule = Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>>
+let flagModuleCache: FlagModule | null = null
+
+const useFlagComponent = (code: string | undefined) => {
+  const [Flag, setFlag] = useState<React.ComponentType<React.SVGProps<SVGSVGElement>> | null>(null)
+  useEffect(() => {
+    if (!code) { setFlag(null); return }
+    const upper = code.toUpperCase()
+    if (flagModuleCache) {
+      setFlag(() => flagModuleCache![upper] ?? null)
+      return
+    }
+    import('country-flag-icons/react/3x2')
+      .then((mod) => {
+        flagModuleCache = mod as unknown as FlagModule
+        setFlag(() => flagModuleCache![upper] ?? null)
+      })
+      .catch(() => setFlag(null))
+  }, [code])
+  return Flag
+}
 
 const getCountryName = (code: string, locale: string) => {
   try {
@@ -41,6 +61,7 @@ export const HeroSection = ({ items }: HeroSectionProps) => {
   const didDrag = useRef(false)
 
   const item = items[currentIndex]
+  const Flag = useFlagComponent(item.origin_country?.[0])
 
   const goNext = useCallback(() => {
     setCurrentIndex((i) => (i + 1) % items.length)
@@ -147,16 +168,12 @@ export const HeroSection = ({ items }: HeroSectionProps) => {
                   {formatVotes(item.vote_count)} {t('votes')}
                 </span>
               )}
-              {item.origin_country?.[0] && (() => {
-                const code = item.origin_country![0].toUpperCase() as keyof typeof Flags
-                const Flag = Flags[code]
-                return (
-                  <span className="flex items-center gap-1.5">
-                    {Flag && <Flag className="h-3.5 w-auto rounded-[1px]" />}
-                    {getCountryName(item.origin_country![0], locale)}
-                  </span>
-                )
-              })()}
+              {item.origin_country?.[0] && (
+                <span className="flex items-center gap-1.5">
+                  {Flag && <Flag className="h-3.5 w-auto rounded-[1px]" />}
+                  {getCountryName(item.origin_country![0], locale)}
+                </span>
+              )}
               {item.year && <span>{item.year}</span>}
             </div>
 
