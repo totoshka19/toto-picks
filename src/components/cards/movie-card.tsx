@@ -58,10 +58,10 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
     rating >= 7 ? 'text-green-400' : rating >= 5 ? 'text-yellow-400' : 'text-red-400'
 
   return (
-    <Link href={href} className="group block">
-      <div className="relative overflow-hidden rounded-lg bg-card">
+    <Link href={href} className="group block h-full">
+      <div className="relative overflow-hidden rounded-lg bg-card h-full flex flex-col">
         {/* Poster */}
-        <div className="relative aspect-[2/3] overflow-hidden bg-muted">
+        <div className="relative aspect-[2/3] shrink-0 overflow-hidden bg-muted">
           {posterUrl ? (
             <Image
               src={posterUrl}
@@ -107,7 +107,7 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
         </div>
 
         {/* Info */}
-        <div className="p-2">
+        <div className="p-2 flex-1">
           <h3 className="text-sm font-medium leading-tight line-clamp-2 group-hover:text-primary transition-colors">
             {title}
           </h3>
