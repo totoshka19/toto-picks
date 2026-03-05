@@ -1,26 +1,41 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { useTranslations } from 'next-intl'
-import { motion } from 'motion/react'
-import { Play, Info } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
+import { Info, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { RatingBadge } from '@/components/rating-badge'
 import { tmdbBackdrop } from '@/lib/tmdb'
 import type { Movie } from '@/types/tmdb'
 
 interface HeroSectionProps {
-  movie: Movie
+  movies: Movie[]
   genres?: { id: number; name: string }[]
-  trailerKey?: string
 }
 
-export const HeroSection = ({ movie, genres, trailerKey }: HeroSectionProps) => {
+export const HeroSection = ({ movies, genres }: HeroSectionProps) => {
   const t = useTranslations('movie')
-  const [trailerOpen, setTrailerOpen] = useState(false)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+
+  const movie = movies[currentIndex]
+
+  const goNext = useCallback(() => {
+    setCurrentIndex((i) => (i + 1) % movies.length)
+  }, [movies.length])
+
+  const goPrev = useCallback(() => {
+    setCurrentIndex((i) => (i - 1 + movies.length) % movies.length)
+  }, [movies.length])
+
+  useEffect(() => {
+    if (isPaused) return
+    const timer = setInterval(goNext, 6000)
+    return () => clearInterval(timer)
+  }, [isPaused, goNext])
 
   const backdropUrl = tmdbBackdrop(movie.backdrop_path, 'lg')
   const year = movie.release_date ? new Date(movie.release_date).getFullYear() : null
@@ -29,99 +44,116 @@ export const HeroSection = ({ movie, genres, trailerKey }: HeroSectionProps) => 
     : []
 
   return (
-    <section className="relative h-[70vh] min-h-[500px] max-h-[750px] overflow-hidden">
-      {/* Backdrop */}
-      {backdropUrl && (
-        <Image
-          src={backdropUrl}
-          alt={movie.title}
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-        />
-      )}
+    <section
+      className="relative h-[70vh] min-h-[500px] max-h-[750px] overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Backdrop crossfade */}
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={movie.id}
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+          {backdropUrl && (
+            <Image
+              src={backdropUrl}
+              alt={movie.title}
+              fill
+              priority
+              className="object-cover"
+              sizes="100vw"
+            />
+          )}
+        </motion.div>
+      </AnimatePresence>
 
       {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent z-10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10" />
 
       {/* Content */}
-      <div className="relative h-full container mx-auto max-w-7xl px-4 flex items-end pb-12">
-        <motion.div
-          className="max-w-xl"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {/* Genres */}
-          {movieGenres.length > 0 && (
-            <div className="flex gap-2 mb-3">
-              {movieGenres.map((genre) => (
-                <span
-                  key={genre}
-                  className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30"
-                >
-                  {genre}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Title */}
-          <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-3">
-            {movie.title}
-          </h1>
-
-          {/* Meta */}
-          <div className="flex items-center gap-3 mb-4 text-sm text-muted-foreground">
-            <RatingBadge rating={movie.vote_average} size="md" />
-            {year && <span>{year}</span>}
-          </div>
-
-          {/* Overview */}
-          <p className="text-sm md:text-base text-muted-foreground line-clamp-3 mb-6">
-            {movie.overview}
-          </p>
-
-          {/* Buttons */}
-          <div className="flex flex-wrap gap-3">
-            {trailerKey && (
-              <Button
-                size="lg"
-                onClick={() => setTrailerOpen(true)}
-                className="gap-2"
-              >
-                <Play className="h-5 w-5 fill-current" />
-                {t('watchTrailer')}
-              </Button>
+      <div className="relative z-20 h-full container mx-auto max-w-7xl px-4 flex items-end pb-16">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={movie.id}
+            className="max-w-xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4 }}
+          >
+            {movieGenres.length > 0 && (
+              <div className="flex gap-2 mb-3">
+                {movieGenres.map((genre) => (
+                  <span
+                    key={genre}
+                    className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30"
+                  >
+                    {genre}
+                  </span>
+                ))}
+              </div>
             )}
+
+            <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-3">
+              {movie.title}
+            </h1>
+
+            <div className="flex items-center gap-3 mb-4 text-sm text-muted-foreground">
+              <RatingBadge rating={movie.vote_average} size="md" />
+              {year && <span>{year}</span>}
+            </div>
+
+            <p className="text-sm md:text-base text-muted-foreground line-clamp-3 mb-6">
+              {movie.overview}
+            </p>
+
             <Button variant="secondary" size="lg" asChild className="gap-2">
               <Link href={`/movie/${movie.id}`}>
                 <Info className="h-5 w-5" />
                 {t('moreInfo')}
               </Link>
             </Button>
-          </div>
-        </motion.div>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      {/* Trailer dialog */}
-      {trailerKey && (
-        <Dialog open={trailerOpen} onOpenChange={setTrailerOpen}>
-          <DialogContent className="max-w-3xl p-0 bg-black border-border overflow-hidden">
-            <div className="aspect-video">
-              <iframe
-                src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1`}
-                title="Trailer"
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
+      {/* Prev / Next arrows */}
+      <button
+        onClick={goPrev}
+        aria-label="Previous"
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/40 hover:bg-black/60 transition-colors"
+      >
+        <ChevronLeft className="h-6 w-6" />
+      </button>
+      <button
+        onClick={goNext}
+        aria-label="Next"
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/40 hover:bg-black/60 transition-colors"
+      >
+        <ChevronRight className="h-6 w-6" />
+      </button>
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+        {movies.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentIndex(i)}
+            aria-label={`Slide ${i + 1}`}
+            className={`rounded-full transition-all duration-300 ${
+              i === currentIndex
+                ? 'w-6 h-1.5 bg-primary'
+                : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
+            }`}
+          />
+        ))}
+      </div>
     </section>
   )
 }
