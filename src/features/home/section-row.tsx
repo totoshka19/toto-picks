@@ -1,7 +1,6 @@
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { ChevronRight } from 'lucide-react'
-import { HorizontalScroll } from '@/components/horizontal-scroll'
 import { MovieCard, MovieCardSkeleton } from '@/components/cards/movie-card'
 import type { Movie, TVShow } from '@/types/tmdb'
 import type { MediaType } from '@/types/app'
@@ -41,19 +40,13 @@ export const SectionRow = ({
         )}
       </div>
 
-      <HorizontalScroll>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {isLoading
-          ? Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="w-[160px] shrink-0">
-                <MovieCardSkeleton />
-              </div>
-            ))
+          ? Array.from({ length: 12 }).map((_, i) => <MovieCardSkeleton key={i} />)
           : items.map((item) => (
-              <div key={item.id} className="w-[160px] shrink-0">
-                <MovieCard item={item} mediaType={mediaType} genres={genres} />
-              </div>
+              <MovieCard key={item.id} item={item} mediaType={mediaType} genres={genres} />
             ))}
-      </HorizontalScroll>
+      </div>
     </section>
   )
 }
