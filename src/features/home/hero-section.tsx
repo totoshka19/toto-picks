@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { RatingBadge } from '@/components/rating-badge'
 import { tmdbBackdrop } from '@/lib/tmdb'
 import type { HeroItem } from '@/types/tmdb'
+import Flags from 'country-flag-icons/react/3x2'
 
 const DRAG_THRESHOLD = 50
 
@@ -147,9 +148,16 @@ export const HeroSection = ({ items }: HeroSectionProps) => {
                 </span>
               )}
               {item.year && <span>{item.year}</span>}
-              {item.origin_country?.[0] && (
-                <span>{getCountryName(item.origin_country[0], locale)}</span>
-              )}
+              {item.origin_country?.[0] && (() => {
+                const code = item.origin_country![0].toUpperCase() as keyof typeof Flags
+                const Flag = Flags[code]
+                return (
+                  <span className="flex items-center gap-1.5">
+                    {Flag && <Flag className="h-3.5 w-auto rounded-[1px]" />}
+                    {getCountryName(item.origin_country![0], locale)}
+                  </span>
+                )
+              })()}
             </div>
 
             <p className="text-sm md:text-base text-muted-foreground line-clamp-3 mb-6">
