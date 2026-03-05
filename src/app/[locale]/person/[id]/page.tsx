@@ -2,7 +2,7 @@ import { getLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
-import { tmdbPerson, tmdbProfile } from '@/lib/tmdb'
+import { tmdbPerson, tmdbProfile, tmdbGenres } from '@/lib/tmdb'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HorizontalScroll } from '@/components/horizontal-scroll'
 import { MovieCard } from '@/components/cards/movie-card'
@@ -34,6 +34,11 @@ export default async function PersonPage({ params }: Props) {
   } catch {
     notFound()
   }
+
+  const [{ genres: movieGenres }, { genres: tvGenres }] = await Promise.all([
+    tmdbGenres.movies(locale),
+    tmdbGenres.shows(locale),
+  ])
 
   const profileUrl = tmdbProfile(person.profile_path, 'lg')
 
@@ -164,7 +169,7 @@ export default async function PersonPage({ params }: Props) {
                     <HorizontalScroll>
                       {castMovies.map((item) => (
                         <div key={item.id} className="w-[160px] shrink-0">
-                          <MovieCard item={item} mediaType="movie" />
+                          <MovieCard item={item} mediaType="movie" genres={movieGenres} />
                         </div>
                       ))}
                     </HorizontalScroll>
@@ -178,7 +183,7 @@ export default async function PersonPage({ params }: Props) {
                     <HorizontalScroll>
                       {crewMovies.map((item) => (
                         <div key={item.id} className="w-[160px] shrink-0">
-                          <MovieCard item={item} mediaType="movie" />
+                          <MovieCard item={item} mediaType="movie" genres={movieGenres} />
                         </div>
                       ))}
                     </HorizontalScroll>
@@ -198,7 +203,7 @@ export default async function PersonPage({ params }: Props) {
                     <HorizontalScroll>
                       {castShows.map((item) => (
                         <div key={item.id} className="w-[160px] shrink-0">
-                          <MovieCard item={item} mediaType="tv" />
+                          <MovieCard item={item} mediaType="tv" genres={tvGenres} />
                         </div>
                       ))}
                     </HorizontalScroll>
@@ -212,7 +217,7 @@ export default async function PersonPage({ params }: Props) {
                     <HorizontalScroll>
                       {crewShows.map((item) => (
                         <div key={item.id} className="w-[160px] shrink-0">
-                          <MovieCard item={item} mediaType="tv" />
+                          <MovieCard item={item} mediaType="tv" genres={tvGenres} />
                         </div>
                       ))}
                     </HorizontalScroll>
