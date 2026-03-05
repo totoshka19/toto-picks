@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
-import { Heart, Star, Eye } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Heart, Star, Eye, Users } from 'lucide-react'
+import { cn, formatVotes } from '@/lib/utils'
 import { tmdbPoster } from '@/lib/tmdb'
 import { useFavoritesStore } from '@/store/favorites'
 import { useWatchedStore } from '@/store/watched'
@@ -125,10 +125,18 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
             </button>
           </div>
 
-          {/* Rating badge (always visible) */}
-          <div className={cn('absolute bottom-2 left-2 flex items-center gap-0.5 rounded-md bg-black/70 px-1.5 py-0.5 text-xs font-semibold backdrop-blur-sm', ratingColor)}>
-            <Star className="h-3 w-3 fill-current" />
-            {rating.toFixed(1)}
+          {/* Rating + votes badges (always visible) */}
+          <div className="absolute bottom-2 left-2 flex items-center gap-1">
+            <div className={cn('flex items-center gap-0.5 rounded-md bg-black/70 px-1.5 py-0.5 text-xs font-semibold backdrop-blur-sm', ratingColor)}>
+              <Star className="h-3 w-3 fill-current" />
+              {rating.toFixed(1)}
+            </div>
+            {item.vote_count > 0 && (
+              <div className="flex items-center gap-0.5 rounded-md bg-black/70 px-1.5 py-0.5 text-xs text-white/70 backdrop-blur-sm">
+                <Users className="h-3 w-3" />
+                {formatVotes(item.vote_count)}
+              </div>
+            )}
           </div>
         </div>
 

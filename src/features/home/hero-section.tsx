@@ -9,6 +9,7 @@ import { Info, ChevronLeft, ChevronRight, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { RatingBadge } from '@/components/rating-badge'
 import { tmdbBackdrop } from '@/lib/tmdb'
+import { formatVotes } from '@/lib/utils'
 import type { HeroItem } from '@/types/tmdb'
 const DRAG_THRESHOLD = 50
 
@@ -42,11 +43,6 @@ const getCountryName = (code: string, locale: string) => {
   }
 }
 
-const formatVotes = (n: number) => {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`
-  return String(n)
-}
 
 interface HeroSectionProps {
   items: HeroItem[]
