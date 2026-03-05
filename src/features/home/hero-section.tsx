@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { useTranslations } from 'next-intl'
@@ -11,6 +11,8 @@ import { RatingBadge } from '@/components/rating-badge'
 import { tmdbBackdrop } from '@/lib/tmdb'
 import type { Movie } from '@/types/tmdb'
 
+const DRAG_THRESHOLD = 50
+
 interface HeroSectionProps {
   movies: Movie[]
   genres?: { id: number; name: string }[]
@@ -20,6 +22,8 @@ export const HeroSection = ({ movies, genres }: HeroSectionProps) => {
   const t = useTranslations('movie')
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const dragStartX = useRef<number | null>(null)
+  const didDrag = useRef(false)
 
   const movie = movies[currentIndex]
 
@@ -37,6 +41,21 @@ export const HeroSection = ({ movies, genres }: HeroSectionProps) => {
     return () => clearInterval(timer)
   }, [isPaused, goNext])
 
+  const handleDragStart = (clientX: number) => {
+    dragStartX.current = clientX
+    didDrag.current = false
+  }
+
+  const handleDragEnd = (clientX: number) => {
+    if (dragStartX.current === null) return
+    const delta = clientX - dragStartX.current
+    if (Math.abs(delta) > DRAG_THRESHOLD) {
+      didDrag.current = true
+      delta > 0 ? goPrev() : goNext()
+    }
+    dragStartX.current = null
+  }
+
   const backdropUrl = tmdbBackdrop(movie.backdrop_path, 'lg')
   const year = movie.release_date ? new Date(movie.release_date).getFullYear() : null
   const movieGenres = genres
@@ -45,9 +64,13 @@ export const HeroSection = ({ movies, genres }: HeroSectionProps) => {
 
   return (
     <section
-      className="relative h-[70vh] min-h-[500px] max-h-[750px] overflow-hidden"
+      className="relative h-[70vh] min-h-[500px] max-h-[750px] overflow-hidden select-none"
       onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      onMouseLeave={() => { setIsPaused(false); dragStartX.current = null }}
+      onMouseDown={(e) => handleDragStart(e.clientX)}
+      onMouseUp={(e) => handleDragEnd(e.clientX)}
+      onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
+      onTouchEnd={(e) => handleDragEnd(e.changedTouches[0].clientX)}
     >
       {/* Backdrop crossfade */}
       <AnimatePresence initial={false}>
@@ -113,7 +136,13 @@ export const HeroSection = ({ movies, genres }: HeroSectionProps) => {
               {movie.overview}
             </p>
 
-            <Button variant="secondary" size="lg" asChild className="gap-2">
+            <Button
+              variant="secondary"
+              size="lg"
+              asChild
+              className="gap-2"
+              onClick={(e) => { if (didDrag.current) e.preventDefault() }}
+            >
               <Link href={`/movie/${movie.id}`}>
                 <Info className="h-5 w-5" />
                 {t('moreInfo')}
@@ -123,18 +152,18 @@ export const HeroSection = ({ movies, genres }: HeroSectionProps) => {
         </AnimatePresence>
       </div>
 
-      {/* Prev / Next arrows */}
+      {/* Prev / Next arrows — visible only on wide screens */}
       <button
         onClick={goPrev}
         aria-label="Previous"
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/40 hover:bg-black/60 transition-colors"
+        className="hidden min-[1440px]:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/40 hover:bg-black/60 transition-colors"
       >
         <ChevronLeft className="h-6 w-6" />
       </button>
       <button
         onClick={goNext}
         aria-label="Next"
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/40 hover:bg-black/60 transition-colors"
+        className="hidden min-[1440px]:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/40 hover:bg-black/60 transition-colors"
       >
         <ChevronRight className="h-6 w-6" />
       </button>
