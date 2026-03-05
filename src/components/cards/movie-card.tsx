@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
-import { Heart, Star } from 'lucide-react'
+import { Heart, Star, Eye } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { tmdbPoster } from '@/lib/tmdb'
 import { useFavoritesStore } from '@/store/favorites'
+import { useWatchedStore } from '@/store/watched'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { Movie, TVShow } from '@/types/tmdb'
 import type { MediaType } from '@/types/app'
@@ -26,30 +27,44 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
   const posterUrl = tmdbPoster(item.poster_path, 'md')
   const href = mediaType === 'movie' ? `/movie/${item.id}` : `/show/${item.id}`
 
-  const { add, remove, has } = useFavoritesStore()
+  const favorites = useFavoritesStore()
+  const watchedStore = useWatchedStore()
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
-  const isFavorite = mounted && has(item.id, mediaType)
+  const isFavorite = mounted && favorites.has(item.id, mediaType)
+  const isWatched = mounted && watchedStore.has(item.id, mediaType)
 
   const itemGenres = genres
     ? item.genre_ids?.slice(0, 2).map((id) => genres.find((g) => g.id === id)?.name).filter(Boolean)
     : []
 
+  const buildItem = () => ({
+    id: item.id,
+    mediaType,
+    title,
+    posterPath: item.poster_path,
+    voteAverage: item.vote_average,
+    releaseDate: date ?? '',
+    genreIds: item.genre_ids ?? [],
+  })
+
   const toggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     if (isFavorite) {
-      remove(item.id, mediaType)
+      favorites.remove(item.id, mediaType)
     } else {
-      add({
-        id: item.id,
-        mediaType,
-        title,
-        posterPath: item.poster_path,
-        voteAverage: item.vote_average,
-        releaseDate: date ?? '',
-        genreIds: item.genre_ids ?? [],
-      })
+      favorites.add(buildItem())
+    }
+  }
+
+  const toggleWatched = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (isWatched) {
+      watchedStore.remove(item.id, mediaType)
+    } else {
+      watchedStore.add(buildItem())
     }
   }
 
@@ -76,28 +91,36 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
             </div>
           )}
 
-          {/* Hover overlay */}
-          <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <div className={cn('flex items-center gap-1 text-lg font-bold', ratingColor)}>
-              <Star className="h-5 w-5 fill-current" />
-              {rating.toFixed(1)}
-            </div>
-          </div>
+          {/* Action buttons (watched + favorite) */}
+          <div className="absolute top-2 right-2 flex flex-col gap-1.5">
+            <button
+              onClick={toggleWatched}
+              className={cn(
+                'rounded-full p-1.5 backdrop-blur-sm transition-all',
+                'opacity-0 group-hover:opacity-100',
+                isWatched
+                  ? 'bg-blue-500/90 text-white opacity-100'
+                  : 'bg-black/50 text-white hover:bg-blue-500/90'
+              )}
+              aria-label={isWatched ? 'Remove from watched' : 'Mark as watched'}
+            >
+              <Eye className={cn('h-4 w-4', isWatched && 'fill-current')} />
+            </button>
 
-          {/* Favorite button */}
-          <button
-            onClick={toggleFavorite}
-            className={cn(
-              'absolute top-2 right-2 rounded-full p-1.5 backdrop-blur-sm transition-all',
-              'opacity-0 group-hover:opacity-100',
-              isFavorite
-                ? 'bg-primary text-primary-foreground opacity-100'
-                : 'bg-black/50 text-white hover:bg-primary hover:text-primary-foreground'
-            )}
-            aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-          >
-            <Heart className={cn('h-4 w-4', isFavorite && 'fill-current')} />
-          </button>
+            <button
+              onClick={toggleFavorite}
+              className={cn(
+                'rounded-full p-1.5 backdrop-blur-sm transition-all',
+                'opacity-0 group-hover:opacity-100',
+                isFavorite
+                  ? 'bg-primary text-primary-foreground opacity-100'
+                  : 'bg-black/50 text-white hover:bg-primary hover:text-primary-foreground'
+              )}
+              aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              <Heart className={cn('h-4 w-4', isFavorite && 'fill-current')} />
+            </button>
+          </div>
 
           {/* Rating badge (always visible) */}
           <div className={cn('absolute bottom-2 left-2 flex items-center gap-0.5 rounded-md bg-black/70 px-1.5 py-0.5 text-xs font-semibold backdrop-blur-sm', ratingColor)}>

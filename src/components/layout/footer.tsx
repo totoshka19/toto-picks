@@ -20,6 +20,7 @@ export const Footer = () => {
             <Link href="/movies" className="hover:text-foreground transition-colors">{tNav('movies')}</Link>
             <Link href="/shows" className="hover:text-foreground transition-colors">{tNav('shows')}</Link>
             <Link href="/favorites" className="hover:text-foreground transition-colors">{tNav('favorites')}</Link>
+            <Link href="/watched" className="hover:text-foreground transition-colors">{tNav('watched')}</Link>
           </nav>
 
           <p className="text-xs text-muted-foreground">

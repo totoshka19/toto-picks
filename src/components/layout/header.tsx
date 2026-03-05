@@ -8,14 +8,16 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { SearchButton } from '@/components/search-button'
-import { Menu, Film, Heart, Home, Tv } from 'lucide-react'
+import { Menu, Film, Heart, Home, Tv, Eye } from 'lucide-react'
 import { useFavoritesStore } from '@/store/favorites'
+import { useWatchedStore } from '@/store/watched'
 
 const navItems = [
   { href: '/', labelKey: 'home', icon: Home },
   { href: '/movies', labelKey: 'movies', icon: Film },
   { href: '/shows', labelKey: 'shows', icon: Tv },
   { href: '/favorites', labelKey: 'favorites', icon: Heart },
+  { href: '/watched', labelKey: 'watched', icon: Eye },
 ] as const
 
 export const Header = () => {
@@ -23,11 +25,16 @@ export const Header = () => {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const favoritesCount = useFavoritesStore((s) => s.items.length)
+  const watchedCount = useWatchedStore((s) => s.items.length)
 
   const NavLinks = ({ onClick }: { onClick?: () => void }) => (
     <>
       {navItems.map(({ href, labelKey, icon: Icon }) => {
         const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href)
+        const count =
+          labelKey === 'favorites' ? favoritesCount
+          : labelKey === 'watched' ? watchedCount
+          : 0
         return (
           <Link
             key={href}
@@ -40,9 +47,9 @@ export const Header = () => {
           >
             <Icon className="h-4 w-4" />
             <span>{t(labelKey)}</span>
-            {labelKey === 'favorites' && favoritesCount > 0 && (
+            {count > 0 && (
               <span className="ml-1 rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-primary-foreground leading-none">
-                {favoritesCount}
+                {count}
               </span>
             )}
           </Link>

@@ -103,3 +103,4 @@ export const POPULAR_COUNTRIES = [
 ] as const
 
 export const FAVORITES_STORAGE_KEY = 'toto-picks-favorites'
+export const WATCHED_STORAGE_KEY = 'toto-picks-watched'

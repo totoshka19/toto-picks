@@ -4,6 +4,7 @@
     "movies": "Movies",
     "shows": "TV Shows",
     "favorites": "Favorites",
+    "watched": "Watched",
     "search": "Search"
   },
   "filters": {
@@ -90,6 +91,13 @@
     "movies": "Movies",
     "shows": "TV Shows",
     "remove": "Remove"
+  },
+  "watched": {
+    "title": "Watched",
+    "empty": "Your watched list is empty",
+    "emptyDesc": "Mark movies and TV shows as watched by clicking the eye icon",
+    "movies": "Movies",
+    "shows": "TV Shows"
   },
   "home": {
     "trending": "Trending Now",
