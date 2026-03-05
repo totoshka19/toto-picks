@@ -52,6 +52,9 @@ export default async function HomePage() {
   const shows5 = trendingShows.results.slice(0, 5).map((s) => toHeroShow(s, tvGenres.genres))
   const heroItems: HeroItem[] = movies5.flatMap((m, i) => shows5[i] ? [m, shows5[i]] : [m])
 
+  const heroMovieIds = new Set(movies5.map((m) => m.id))
+  const heroShowIds = new Set(shows5.map((s) => s.id))
+
   const firstBackdropUrl = tmdbBackdrop(heroItems[0]?.backdrop_path, 'lg')
   if (firstBackdropUrl) {
     preload(firstBackdropUrl, { as: 'image', fetchPriority: 'high' })
@@ -64,7 +67,7 @@ export default async function HomePage() {
       <div className="container mx-auto max-w-7xl px-4 space-y-12">
         <SectionRow
           titleKey="newReleases"
-          items={nowPlaying.results.slice(0, 12)}
+          items={nowPlaying.results.filter((m) => !heroMovieIds.has(m.id)).slice(0, 12)}
           mediaType="movie"
           viewAllHref="/movies"
           genres={movieGenres.genres}
@@ -72,7 +75,7 @@ export default async function HomePage() {
 
         <SectionRow
           titleKey="popularShows"
-          items={trendingShows.results.slice(0, 12)}
+          items={trendingShows.results.filter((s) => !heroShowIds.has(s.id)).slice(0, 12)}
           mediaType="tv"
           viewAllHref="/shows"
         />
