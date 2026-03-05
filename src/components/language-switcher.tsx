@@ -21,7 +21,7 @@ export const LanguageSwitcher = () => {
       onClick={toggle}
       className="text-xs font-semibold w-10 h-8 tracking-wider"
     >
-      {locale === 'ru' ? 'EN' : 'RU'}
+      {locale.toUpperCase()}
     </Button>
   )
 }
