@@ -95,7 +95,6 @@ export const HeroSection = ({ items }: HeroSectionProps) => {
               alt={item.title}
               fill
               priority
-              unoptimized
               className="object-cover"
               sizes="100vw"
             />

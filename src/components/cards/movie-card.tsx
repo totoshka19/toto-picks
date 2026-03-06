@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
+import { useTranslations } from 'next-intl'
 import { Heart, Star, Eye, Users } from 'lucide-react'
 import { cn, formatVotes } from '@/lib/utils'
 import { tmdbPoster } from '@/lib/tmdb'
@@ -23,6 +24,7 @@ interface MovieCardProps {
 const isMovie = (item: Movie | TVShow): item is Movie => 'title' in item
 
 export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
+  const t = useTranslations('common')
   const title = isMovie(item) ? item.title : item.name
   const date = isMovie(item) ? item.release_date : item.first_air_date
   const year = date ? new Date(date).getFullYear() : null
@@ -93,7 +95,7 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
             />
           ) : (
             <div className="flex h-full items-center justify-center text-muted-foreground">
-              <span className="text-xs">No poster</span>
+              <span className="text-xs">{t('noImage')}</span>
             </div>
           )}
 
