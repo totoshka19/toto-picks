@@ -11,6 +11,7 @@ import { PersonSearchInput } from './person-search-input'
 import { VOTE_COUNT_OPTIONS, MIN_YEAR, CURRENT_YEAR } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { Genre, TMDBCountry } from '@/types/tmdb'
+import { useLocale } from 'next-intl'
 import { TrendingUp, Star, Calendar, Users, ArrowDown, ArrowUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -46,8 +47,21 @@ const SORT_LABEL_KEY_MAP: Record<string, string> = {
 export const FiltersSidebar = ({ genres, countries, onApply, className, sortOptions }: FiltersSidebarProps) => {
   const t = useTranslations('filters')
   const tSort = useTranslations('sort')
+  const locale = useLocale()
   const store = useFiltersStore()
   const [countrySearch, setCountrySearch] = useState('')
+
+  // Locale-aware country name resolver — uses browser/Node built-in Intl API
+  const countryNames = useMemo(() => {
+    try {
+      return new Intl.DisplayNames([locale], { type: 'region' })
+    } catch {
+      return null
+    }
+  }, [locale])
+
+  const getCountryName = (isoCode: string, fallback: string) =>
+    countryNames?.of(isoCode) ?? fallback
 
   const sortGroups = useMemo(() => {
     if (!sortOptions) return []
@@ -79,14 +93,18 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
     onApply?.()
   }
 
-  // Countries sorted alphabetically; filtered by search query and excluding already-selected
+  // Countries sorted alphabetically in current locale; filtered by search; excluding already-selected
   const filteredCountries = useMemo(() => {
     const unselected = countries.filter(c => !store.countries.includes(c.iso_3166_1))
-    const sorted = [...unselected].sort((a, b) => a.english_name.localeCompare(b.english_name))
+    const sorted = [...unselected].sort((a, b) => {
+      const nameA = countryNames?.of(a.iso_3166_1) ?? a.english_name
+      const nameB = countryNames?.of(b.iso_3166_1) ?? b.english_name
+      return nameA.localeCompare(nameB, locale)
+    })
     if (!countrySearch.trim()) return sorted
     const q = countrySearch.toLowerCase()
-    return sorted.filter(c => c.english_name.toLowerCase().includes(q))
-  }, [countries, store.countries, countrySearch])
+    return sorted.filter(c => (countryNames?.of(c.iso_3166_1) ?? c.english_name).toLowerCase().includes(q))
+  }, [countries, store.countries, countrySearch, countryNames, locale])
 
   return (
     <div className={cn('space-y-5', className)}>
@@ -180,7 +198,7 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
                   onClick={() => store.toggleCountry(code)}
                   className="px-2.5 py-1 rounded-full text-xs font-medium border transition-all bg-primary text-primary-foreground border-primary"
                 >
-                  {country?.english_name ?? code}
+                  {getCountryName(code, country?.english_name ?? code)}
                 </button>
               )
             })}
@@ -210,7 +228,7 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
                 'border-border text-muted-foreground hover:border-primary hover:text-primary'
               )}
             >
-              {country.english_name}
+              {getCountryName(country.iso_3166_1, country.english_name)}
             </button>
           ))}
         </div>
