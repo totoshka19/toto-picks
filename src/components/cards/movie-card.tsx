@@ -96,7 +96,7 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
     }
   }
 
-  const rating = item.vote_average
+  const rating = item.vote_average ?? 0
   const ratingColor =
     rating >= 7 ? 'text-green-400' : rating >= 5 ? 'text-yellow-400' : 'text-red-400'
 
