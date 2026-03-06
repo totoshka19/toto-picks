@@ -12,14 +12,21 @@ import { cn } from '@/lib/utils'
 import type { Genre } from '@/types/tmdb'
 import { useLocale } from 'next-intl'
 
+interface SortOption {
+  value: string
+  labelKey: string
+}
+
 interface FiltersSidebarProps {
   genres: Genre[]
   onApply?: () => void
   className?: string
+  sortOptions?: readonly SortOption[]
 }
 
-export const FiltersSidebar = ({ genres, onApply, className }: FiltersSidebarProps) => {
+export const FiltersSidebar = ({ genres, onApply, className, sortOptions }: FiltersSidebarProps) => {
   const t = useTranslations('filters')
+  const tSort = useTranslations('sort')
   const locale = useLocale()
   const store = useFiltersStore()
 
@@ -29,6 +36,30 @@ export const FiltersSidebar = ({ genres, onApply, className }: FiltersSidebarPro
 
   return (
     <div className={cn('space-y-5', className)}>
+      {sortOptions && (
+        <>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">{t('sort')}</label>
+            <Select
+              value={store.sortBy}
+              onValueChange={(v) => { store.setSortBy(v); onApply?.() }}
+            >
+              <SelectTrigger className="h-8 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {sortOptions.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {tSort(opt.labelKey as Parameters<typeof tSort>[0])}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Separator />
+        </>
+      )}
+
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">
           {t('title')}

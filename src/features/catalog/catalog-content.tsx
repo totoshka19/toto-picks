@@ -10,8 +10,7 @@ import { MovieCard, MovieCardSkeleton } from '@/components/cards/movie-card'
 import { Pagination } from '@/components/pagination'
 import { EmptyState } from '@/components/empty-state'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { SlidersHorizontal } from 'lucide-react'
 import type { Genre } from '@/types/tmdb'
 import type { MediaType } from '@/types/app'
@@ -60,11 +59,9 @@ const CatalogGrid = ({ genres, mediaType }: CatalogContentProps) => {
 
 export const CatalogContent = ({ genres, mediaType }: CatalogContentProps) => {
   const t = useTranslations('filters')
-  const store = useFiltersStore()
   const { pushFiltersToUrl } = useFiltersUrlSync()
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const sortOptions = mediaType === 'movie' ? SORT_OPTIONS : SORT_OPTIONS_TV
-  const tSort = useTranslations('sort')
 
   const handleApply = () => {
     pushFiltersToUrl()
@@ -76,43 +73,26 @@ export const CatalogContent = ({ genres, mediaType }: CatalogContentProps) => {
       {/* Sidebar: desktop */}
       <aside className="hidden lg:block w-64 shrink-0">
         <div className="sticky top-20 rounded-xl border border-border bg-card p-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
-          <FiltersSidebar genres={genres} onApply={handleApply} />
+          <FiltersSidebar genres={genres} onApply={handleApply} sortOptions={sortOptions} />
         </div>
       </aside>
 
       {/* Main content */}
       <div className="flex-1 min-w-0">
-        {/* Sort bar */}
-        <div className="flex items-center justify-between gap-3 mb-5">
-          {/* Mobile filters button */}
+        {/* Mobile filters button */}
+        <div className="mb-5 lg:hidden">
           <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="sm" className="lg:hidden gap-2">
+              <Button variant="outline" size="sm" className="gap-2">
                 <SlidersHorizontal className="h-4 w-4" />
                 {t('openFilters')}
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-80 overflow-y-auto pt-12">
-              <FiltersSidebar genres={genres} onApply={handleApply} />
+              <SheetTitle className="sr-only">{t('title')}</SheetTitle>
+              <FiltersSidebar genres={genres} onApply={handleApply} sortOptions={sortOptions} />
             </SheetContent>
           </Sheet>
-
-          {/* Sort */}
-          <Select
-            value={store.sortBy}
-            onValueChange={(v) => { store.setSortBy(v); handleApply() }}
-          >
-            <SelectTrigger className="w-48 h-8 text-sm ml-auto">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {sortOptions.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {tSort(opt.labelKey as Parameters<typeof tSort>[0])}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
 
         <Suspense fallback={null}>
