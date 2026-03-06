@@ -5,15 +5,16 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { useFiltersStore } from '@/store/filters'
 import { DEFAULT_FILTERS, MIN_YEAR, CURRENT_YEAR } from '@/lib/constants'
 
-// Reads URL params on mount and syncs them to Zustand store.
-// On store change, updates URL params.
+// Reads URL params on mount and syncs them to the store — only if URL has params.
+// If no URL params, the persisted localStorage state is used as-is.
+// On store change, updates URL params via pushFiltersToUrl().
 export const useFiltersUrlSync = () => {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
   const store = useFiltersStore()
 
-  // URL → Store (on mount / URL change)
+  // URL → Store (on mount, only if URL has filter params)
   useEffect(() => {
     const genres = searchParams.get('genres')
     const countries = searchParams.get('countries')
@@ -24,6 +25,13 @@ export const useFiltersUrlSync = () => {
     const voteCountMin = searchParams.get('voteCountMin')
     const sortBy = searchParams.get('sortBy')
     const page = searchParams.get('page')
+
+    // If the URL has no filter params, keep persisted state from localStorage
+    const hasUrlParams = !!(
+      genres || countries || yearFrom || yearTo ||
+      ratingFrom || ratingTo || voteCountMin || sortBy || page
+    )
+    if (!hasUrlParams) return
 
     store.setGenres(genres ? genres.split(',').map(Number).filter(Boolean) : [])
     store.setCountries(countries ? countries.split(',').filter(Boolean) : [])

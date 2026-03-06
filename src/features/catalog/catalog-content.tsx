@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from 'react'
 import { useTranslations } from 'next-intl'
-import { useFiltersStore } from '@/store/filters'
+import { useFiltersStore, FiltersStoreProvider } from '@/store/filters'
 import { useDiscoverQuery } from './use-discover-query'
 import { useFiltersUrlSync } from '@/hooks/use-filters-url-sync'
 import { FiltersSidebar } from '@/features/filters/filters-sidebar'
@@ -57,7 +57,7 @@ const CatalogGrid = ({ genres, mediaType }: CatalogContentProps) => {
   )
 }
 
-export const CatalogContent = ({ genres, mediaType }: CatalogContentProps) => {
+const CatalogContentInner = ({ genres, mediaType }: CatalogContentProps) => {
   const t = useTranslations('filters')
   const { pushFiltersToUrl } = useFiltersUrlSync()
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
@@ -102,3 +102,9 @@ export const CatalogContent = ({ genres, mediaType }: CatalogContentProps) => {
     </div>
   )
 }
+
+export const CatalogContent = ({ genres, mediaType }: CatalogContentProps) => (
+  <FiltersStoreProvider mediaType={mediaType}>
+    <CatalogContentInner genres={genres} mediaType={mediaType} />
+  </FiltersStoreProvider>
+)

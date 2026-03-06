@@ -71,7 +71,7 @@ export const useDiscoverQuery = (mediaType: MediaType) => {
 
   const buildMovieFilters = (): DiscoverMovieFilters => {
     const filters: DiscoverMovieFilters = { sort_by: store.sortBy, page: store.page }
-    if (store.genres.length) filters.with_genres = store.genres.join(',')
+    if (store.genres.length) filters.with_genres = store.genres.join('|')
     if (store.countries.length) filters.with_origin_country = store.countries.join('|')
     if (store.yearFrom !== MIN_YEAR) filters['primary_release_date.gte'] = `${store.yearFrom}-01-01`
     if (store.yearTo !== CURRENT_YEAR) filters['primary_release_date.lte'] = `${store.yearTo}-12-31`
@@ -85,7 +85,7 @@ export const useDiscoverQuery = (mediaType: MediaType) => {
 
   const buildTVFilters = (): DiscoverTVFilters => {
     const filters: DiscoverTVFilters = { sort_by: store.sortBy, page: store.page }
-    if (store.genres.length) filters.with_genres = store.genres.join(',')
+    if (store.genres.length) filters.with_genres = store.genres.join('|')
     if (store.countries.length) filters.with_origin_country = store.countries.join('|')
     if (store.yearFrom !== MIN_YEAR) filters['first_air_date.gte'] = `${store.yearFrom}-01-01`
     if (store.yearTo !== CURRENT_YEAR) filters['first_air_date.lte'] = `${store.yearTo}-12-31`
