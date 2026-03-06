@@ -80,41 +80,34 @@ export const TMDB_LANGUAGE_MAP: Record<string, string> = {
 export const LOCALES = ['ru', 'en'] as const
 export const DEFAULT_LOCALE = 'ru' as const
 
-// Countries with notable film/TV industries — used to filter the full TMDB list.
-// Excludes micro-territories, uninhabited islands, and overseas dependencies
-// that have no meaningful cinema production.
-export const FILM_COUNTRIES = new Set([
-  // North America
-  'US', 'CA', 'MX',
-  // Central America & Caribbean
-  'GT', 'SV', 'HN', 'NI', 'CR', 'PA', 'CU', 'DO', 'JM', 'HT', 'TT',
-  // South America
-  'BR', 'AR', 'CO', 'CL', 'PE', 'VE', 'UY', 'EC', 'BO', 'PY',
-  // Western Europe
-  'GB', 'FR', 'DE', 'IT', 'ES', 'PT', 'NL', 'BE', 'CH', 'AT', 'IE', 'LU',
-  // Nordic
-  'SE', 'DK', 'NO', 'FI', 'IS',
-  // Eastern Europe
-  'PL', 'CZ', 'SK', 'HU', 'RO', 'BG', 'GR', 'RS', 'HR', 'SI', 'BA', 'MK', 'AL', 'ME',
-  // Former Soviet
-  'RU', 'UA', 'BY', 'MD', 'GE', 'AM', 'AZ', 'KZ', 'UZ', 'KG', 'TJ', 'TM',
-  // Baltic
-  'LT', 'LV', 'EE',
-  // Middle East
-  'TR', 'IL', 'IR', 'LB', 'EG', 'SA', 'AE', 'IQ', 'JO', 'SY', 'YE', 'KW', 'QA', 'BH',
-  // Africa
-  'MA', 'TN', 'DZ', 'LY', 'NG', 'ZA', 'KE', 'GH', 'ET', 'SN', 'CM', 'CI', 'TZ', 'UG', 'RW',
-  // South & Central Asia
-  'IN', 'PK', 'BD', 'LK', 'NP', 'AF',
-  // East Asia
-  'CN', 'JP', 'KR', 'TW', 'HK', 'MN',
-  // Southeast Asia
-  'TH', 'VN', 'PH', 'ID', 'MY', 'SG', 'MM', 'KH', 'LA',
-  // Oceania
-  'AU', 'NZ', 'PG', 'FJ',
+// Countries with notable film/TV industries, ordered by cinematic prominence.
+// Order determines the display ranking in the country filter sidebar.
+// Excludes micro-territories and dependencies with no meaningful cinema.
+export const FILM_COUNTRIES_ORDERED = [
+  // Tier 1 — Major global film industries
+  'US', 'GB', 'FR', 'JP', 'DE', 'KR', 'IN', 'IT', 'CN', 'ES',
+  // Tier 2 — Strong international presence
+  'RU', 'AU', 'CA', 'BR', 'MX', 'SE', 'TR', 'PL', 'DK', 'NO',
+  // Tier 3 — Notable European
+  'NL', 'BE', 'HU', 'CZ', 'RO', 'PT', 'GR', 'AT', 'CH', 'IE',
+  'FI', 'IS', 'UA', 'BG', 'RS', 'HR', 'SK', 'BY', 'LT', 'LV', 'EE',
+  // Tier 4 — Asia, Middle East, North Africa
+  'HK', 'TW', 'TH', 'IR', 'IL', 'VN', 'PH', 'ID', 'SG', 'MY',
+  'EG', 'MA', 'SA', 'AE', 'LB', 'IQ', 'JO', 'SY', 'KW', 'QA',
+  // Tier 5 — Latin America (beyond top), Sub-Saharan Africa, rest of Asia
+  'AR', 'CO', 'CL', 'PE', 'CU', 'VE', 'UY', 'EC', 'BO',
+  'NG', 'ZA', 'KE', 'GH', 'SN', 'ET', 'CI', 'CM', 'TZ',
+  'PK', 'BD', 'LK', 'NP', 'MM', 'KH', 'MN', 'AF', 'LA',
+  // Tier 6 — Smaller but represented in TMDB
+  'SI', 'BA', 'MK', 'AL', 'ME', 'MD', 'GE', 'AM', 'AZ',
+  'KZ', 'UZ', 'LU', 'DZ', 'TN', 'LY', 'YE', 'BH', 'NZ',
+  'GT', 'CR', 'PA', 'DO', 'CU', 'JM', 'HT', 'TT', 'PY', 'PG', 'FJ',
   // Historical/special TMDB codes (notable cinematographic heritage)
   'XC', 'XG', 'XK',
-])
+]
+
+// Set for O(1) membership checks
+export const FILM_COUNTRIES = new Set(FILM_COUNTRIES_ORDERED)
 
 export const FAVORITES_STORAGE_KEY = 'toto-picks-favorites'
 export const WATCHED_STORAGE_KEY = 'toto-picks-watched'

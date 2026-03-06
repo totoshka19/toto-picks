@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useFiltersStore } from '@/store/filters'
 import { PersonSearchInput } from './person-search-input'
-import { VOTE_COUNT_OPTIONS, MIN_YEAR, CURRENT_YEAR, FILM_COUNTRIES } from '@/lib/constants'
+import { VOTE_COUNT_OPTIONS, MIN_YEAR, CURRENT_YEAR, FILM_COUNTRIES, FILM_COUNTRIES_ORDERED } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { Genre, TMDBCountry } from '@/types/tmdb'
 import { useLocale } from 'next-intl'
@@ -96,21 +96,32 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
     onApply?.()
   }
 
-  // Countries sorted alphabetically in current locale; filtered by search; excluding already-selected
+  // Priority index map for O(1) sort lookup
+  const priorityMap = useMemo(
+    () => new Map(FILM_COUNTRIES_ORDERED.map((code, i) => [code, i])),
+    []
+  )
+
+  // Without search: sorted by cinematic prominence; with search: alphabetical among matches
   const filteredCountries = useMemo(() => {
     const unselected = countries.filter(c =>
       FILM_COUNTRIES.has(c.iso_3166_1) && !store.countries.includes(c.iso_3166_1)
     )
-    const sorted = [...unselected].sort((a, b) =>
-      getCountryName(a.iso_3166_1, a.english_name).localeCompare(
-        getCountryName(b.iso_3166_1, b.english_name), locale
+    if (!countrySearch.trim()) {
+      return [...unselected].sort(
+        (a, b) => (priorityMap.get(a.iso_3166_1) ?? 999) - (priorityMap.get(b.iso_3166_1) ?? 999)
       )
-    )
-    if (!countrySearch.trim()) return sorted
+    }
     const q = countrySearch.toLowerCase()
-    return sorted.filter(c => getCountryName(c.iso_3166_1, c.english_name).toLowerCase().includes(q))
+    return unselected
+      .filter(c => getCountryName(c.iso_3166_1, c.english_name).toLowerCase().includes(q))
+      .sort((a, b) =>
+        getCountryName(a.iso_3166_1, a.english_name).localeCompare(
+          getCountryName(b.iso_3166_1, b.english_name), locale
+        )
+      )
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [countries, store.countries, countrySearch, countryNames, locale])
+  }, [countries, store.countries, countrySearch, countryNames, locale, priorityMap])
 
   return (
     <div className={cn('space-y-5', className)}>
