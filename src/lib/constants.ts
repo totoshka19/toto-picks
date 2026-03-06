@@ -30,6 +30,7 @@ export const SORT_OPTIONS = [
   { value: 'primary_release_date.desc', labelKey: 'releaseDateDesc' },
   { value: 'primary_release_date.asc', labelKey: 'releaseDateAsc' },
   { value: 'vote_count.desc', labelKey: 'voteCountDesc' },
+  { value: 'vote_count.asc', labelKey: 'voteCountAsc' },
 ] as const
 
 export const SORT_OPTIONS_TV = [
@@ -40,6 +41,7 @@ export const SORT_OPTIONS_TV = [
   { value: 'first_air_date.desc', labelKey: 'releaseDateDesc' },
   { value: 'first_air_date.asc', labelKey: 'releaseDateAsc' },
   { value: 'vote_count.desc', labelKey: 'voteCountDesc' },
+  { value: 'vote_count.asc', labelKey: 'voteCountAsc' },
 ] as const
 
 export const VOTE_COUNT_OPTIONS = [

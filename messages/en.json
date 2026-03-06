@@ -34,6 +34,7 @@
     "releaseDateDesc": "Newest first",
     "releaseDateAsc": "Oldest first",
     "voteCountDesc": "Most voted",
+    "voteCountAsc": "Least voted",
     "popularity": "Trend",
     "rating": "Rating",
     "date": "Date",

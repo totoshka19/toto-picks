@@ -34,6 +34,7 @@
     "releaseDateDesc": "Сначала новые",
     "releaseDateAsc": "Сначала старые",
     "voteCountDesc": "По количеству голосов",
+    "voteCountAsc": "Меньше всего голосов",
     "popularity": "Тренд",
     "rating": "Рейтинг",
     "date": "Дата",
