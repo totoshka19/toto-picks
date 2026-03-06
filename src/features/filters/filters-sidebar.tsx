@@ -85,7 +85,7 @@ export const FiltersSidebar = ({ genres, onApply, className, sortOptions }: Filt
         <>
           <div className="space-y-2">
             <label className="text-sm font-medium">{t('sort')}</label>
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="grid grid-cols-2 gap-1.5 mt-1">
               {sortGroups.map((base) => {
                 const Icon = SORT_ICON_MAP[base] ?? TrendingUp
                 const labelKey = SORT_LABEL_KEY_MAP[base] ?? 'popularity'
