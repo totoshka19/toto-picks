@@ -9,6 +9,7 @@ import type {
   MovieCreditsResponse,
   MultiSearchResult,
   Genre,
+  TMDBCountry,
   DiscoverMovieFilters,
   DiscoverTVFilters,
 } from '@/types/tmdb'
@@ -144,6 +145,15 @@ export const tmdbGenres = {
 
   shows: (locale = 'ru') =>
     fetchTMDB<{ genres: Genre[] }>('/genre/tv/list', {}, locale),
+}
+
+// ─── Countries ───────────────────────────────────────────────────────────────
+// Returns all ~250 TMDB-supported countries with english_name and native_name.
+// Note: the language param does not translate country names on this endpoint.
+
+export const tmdbCountries = {
+  list: () =>
+    fetchTMDB<TMDBCountry[]>('/configuration/countries', {}),
 }
 
 // ─── Search ──────────────────────────────────────────────────────────────────

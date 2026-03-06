@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Slider } from '@/components/ui/slider'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -8,10 +8,9 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useFiltersStore } from '@/store/filters'
 import { PersonSearchInput } from './person-search-input'
-import { VOTE_COUNT_OPTIONS, POPULAR_COUNTRIES, MIN_YEAR, CURRENT_YEAR } from '@/lib/constants'
+import { VOTE_COUNT_OPTIONS, MIN_YEAR, CURRENT_YEAR } from '@/lib/constants'
 import { cn } from '@/lib/utils'
-import type { Genre } from '@/types/tmdb'
-import { useLocale } from 'next-intl'
+import type { Genre, TMDBCountry } from '@/types/tmdb'
 import { TrendingUp, Star, Calendar, Users, ArrowDown, ArrowUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -22,6 +21,7 @@ interface SortOption {
 
 interface FiltersSidebarProps {
   genres: Genre[]
+  countries: TMDBCountry[]
   onApply?: () => void
   className?: string
   sortOptions?: readonly SortOption[]
@@ -43,11 +43,11 @@ const SORT_LABEL_KEY_MAP: Record<string, string> = {
   vote_count: 'votes',
 }
 
-export const FiltersSidebar = ({ genres, onApply, className, sortOptions }: FiltersSidebarProps) => {
+export const FiltersSidebar = ({ genres, countries, onApply, className, sortOptions }: FiltersSidebarProps) => {
   const t = useTranslations('filters')
   const tSort = useTranslations('sort')
-  const locale = useLocale()
   const store = useFiltersStore()
+  const [countrySearch, setCountrySearch] = useState('')
 
   const sortGroups = useMemo(() => {
     if (!sortOptions) return []
@@ -78,6 +78,15 @@ export const FiltersSidebar = ({ genres, onApply, className, sortOptions }: Filt
   const handleApply = () => {
     onApply?.()
   }
+
+  // Countries sorted alphabetically; filtered by search query and excluding already-selected
+  const filteredCountries = useMemo(() => {
+    const unselected = countries.filter(c => !store.countries.includes(c.iso_3166_1))
+    const sorted = [...unselected].sort((a, b) => a.english_name.localeCompare(b.english_name))
+    if (!countrySearch.trim()) return sorted
+    const q = countrySearch.toLowerCase()
+    return sorted.filter(c => c.english_name.toLowerCase().includes(q))
+  }, [countries, store.countries, countrySearch])
 
   return (
     <div className={cn('space-y-5', className)}>
@@ -159,19 +168,49 @@ export const FiltersSidebar = ({ genres, onApply, className, sortOptions }: Filt
       {/* Country */}
       <div className="space-y-2">
         <label className="text-sm font-medium">{t('country')}</label>
-        <div className="flex flex-wrap gap-1.5">
-          {POPULAR_COUNTRIES.map((country) => (
+
+        {/* Selected countries — always shown as active chips */}
+        {store.countries.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {store.countries.map((code) => {
+              const country = countries.find(c => c.iso_3166_1 === code)
+              return (
+                <button
+                  key={code}
+                  onClick={() => store.toggleCountry(code)}
+                  className="px-2.5 py-1 rounded-full text-xs font-medium border transition-all bg-primary text-primary-foreground border-primary"
+                >
+                  {country?.english_name ?? code}
+                </button>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Search input */}
+        <input
+          type="text"
+          value={countrySearch}
+          onChange={e => setCountrySearch(e.target.value)}
+          placeholder={t('countryPlaceholder')}
+          className="w-full h-8 px-3 text-xs rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-muted-foreground"
+        />
+
+        {/* Filtered country chips — scrollable */}
+        <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto">
+          {filteredCountries.map((country) => (
             <button
-              key={country.code}
-              onClick={() => store.toggleCountry(country.code)}
+              key={country.iso_3166_1}
+              onClick={() => {
+                store.toggleCountry(country.iso_3166_1)
+                setCountrySearch('')
+              }}
               className={cn(
                 'px-2.5 py-1 rounded-full text-xs font-medium border transition-all',
-                store.countries.includes(country.code)
-                  ? 'bg-primary text-primary-foreground border-primary'
-                  : 'border-border text-muted-foreground hover:border-primary hover:text-primary'
+                'border-border text-muted-foreground hover:border-primary hover:text-primary'
               )}
             >
-              {locale === 'ru' ? country.nameRu : country.nameEn}
+              {country.english_name}
             </button>
           ))}
         </div>

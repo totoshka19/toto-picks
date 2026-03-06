@@ -12,16 +12,17 @@ import { EmptyState } from '@/components/empty-state'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { SlidersHorizontal } from 'lucide-react'
-import type { Genre } from '@/types/tmdb'
+import type { Genre, TMDBCountry } from '@/types/tmdb'
 import type { MediaType } from '@/types/app'
 import { SORT_OPTIONS, SORT_OPTIONS_TV } from '@/lib/constants'
 
 interface CatalogContentProps {
   genres: Genre[]
+  countries: TMDBCountry[]
   mediaType: MediaType
 }
 
-const CatalogGrid = ({ genres, mediaType }: CatalogContentProps) => {
+const CatalogGrid = ({ genres, mediaType }: Omit<CatalogContentProps, 'countries'>) => {
   const { data, isLoading } = useDiscoverQuery(mediaType)
   const store = useFiltersStore()
   const t = useTranslations('catalog')
@@ -57,7 +58,7 @@ const CatalogGrid = ({ genres, mediaType }: CatalogContentProps) => {
   )
 }
 
-const CatalogContentInner = ({ genres, mediaType }: CatalogContentProps) => {
+const CatalogContentInner = ({ genres, countries, mediaType }: CatalogContentProps) => {
   const t = useTranslations('filters')
   const { pushFiltersToUrl } = useFiltersUrlSync()
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
@@ -73,7 +74,7 @@ const CatalogContentInner = ({ genres, mediaType }: CatalogContentProps) => {
       {/* Sidebar: desktop */}
       <aside className="hidden lg:block w-64 shrink-0">
         <div className="sticky top-20 rounded-xl border border-border bg-card p-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
-          <FiltersSidebar genres={genres} onApply={handleApply} sortOptions={sortOptions} />
+          <FiltersSidebar genres={genres} countries={countries} onApply={handleApply} sortOptions={sortOptions} />
         </div>
       </aside>
 
@@ -90,7 +91,7 @@ const CatalogContentInner = ({ genres, mediaType }: CatalogContentProps) => {
             </SheetTrigger>
             <SheetContent side="left" className="w-80 overflow-y-auto pt-12">
               <SheetTitle className="sr-only">{t('title')}</SheetTitle>
-              <FiltersSidebar genres={genres} onApply={handleApply} sortOptions={sortOptions} />
+              <FiltersSidebar genres={genres} countries={countries} onApply={handleApply} sortOptions={sortOptions} />
             </SheetContent>
           </Sheet>
         </div>
@@ -103,8 +104,8 @@ const CatalogContentInner = ({ genres, mediaType }: CatalogContentProps) => {
   )
 }
 
-export const CatalogContent = ({ genres, mediaType }: CatalogContentProps) => (
+export const CatalogContent = ({ genres, countries, mediaType }: CatalogContentProps) => (
   <FiltersStoreProvider mediaType={mediaType}>
-    <CatalogContentInner genres={genres} mediaType={mediaType} />
+    <CatalogContentInner genres={genres} countries={countries} mediaType={mediaType} />
   </FiltersStoreProvider>
 )

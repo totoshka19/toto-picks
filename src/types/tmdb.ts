@@ -12,6 +12,12 @@ export interface Genre {
   name: string
 }
 
+export interface TMDBCountry {
+  iso_3166_1: string
+  english_name: string
+  native_name: string
+}
+
 export interface ProductionCountry {
   iso_3166_1: string
   name: string
