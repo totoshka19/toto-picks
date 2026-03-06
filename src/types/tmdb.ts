@@ -254,31 +254,25 @@ export type MultiSearchResult =
   | (Person & { media_type: 'person' })
 
 // Discover filters
-export interface DiscoverMovieFilters {
+export interface DiscoverBaseFilters {
   with_genres?: string
   with_origin_country?: string
-  'primary_release_date.gte'?: string
-  'primary_release_date.lte'?: string
   'vote_average.gte'?: number
   'vote_average.lte'?: number
   'vote_count.gte'?: number
   with_cast?: string
-  with_crew?: string
   sort_by?: string
   page?: number
   language?: string
 }
 
-export interface DiscoverTVFilters {
-  with_genres?: string
-  with_origin_country?: string
+export interface DiscoverMovieFilters extends DiscoverBaseFilters {
+  'primary_release_date.gte'?: string
+  'primary_release_date.lte'?: string
+  with_crew?: string
+}
+
+export interface DiscoverTVFilters extends DiscoverBaseFilters {
   'first_air_date.gte'?: string
   'first_air_date.lte'?: string
-  'vote_average.gte'?: number
-  'vote_average.lte'?: number
-  'vote_count.gte'?: number
-  with_cast?: string
-  sort_by?: string
-  page?: number
-  language?: string
 }

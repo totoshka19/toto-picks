@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useLocale } from 'next-intl'
 import { useFiltersStore } from '@/store/filters'
 import { tmdbMovies, tmdbShows, tmdbPerson } from '@/lib/tmdb'
-import type { TMDBResponse, Movie, TVShow, DiscoverMovieFilters, DiscoverTVFilters } from '@/types/tmdb'
+import type { TMDBResponse, Movie, TVShow, DiscoverBaseFilters, DiscoverMovieFilters, DiscoverTVFilters } from '@/types/tmdb'
 import type { MediaType, PersonFilter } from '@/types/app'
 import { CURRENT_YEAR, MIN_YEAR } from '@/lib/constants'
 
@@ -69,30 +69,29 @@ export const useDiscoverQuery = (mediaType: MediaType) => {
   const locale = useLocale()
   const store = useFiltersStore()
 
-  const buildMovieFilters = (): DiscoverMovieFilters => {
-    const filters: DiscoverMovieFilters = { sort_by: store.sortBy, page: store.page }
+  const buildCommonFilters = (): DiscoverBaseFilters => {
+    const filters: DiscoverBaseFilters = { sort_by: store.sortBy, page: store.page }
     if (store.genres.length) filters.with_genres = store.genres.join('|')
     if (store.countries.length) filters.with_origin_country = store.countries.join('|')
-    if (store.yearFrom !== MIN_YEAR) filters['primary_release_date.gte'] = `${store.yearFrom}-01-01`
-    if (store.yearTo !== CURRENT_YEAR) filters['primary_release_date.lte'] = `${store.yearTo}-12-31`
     if (store.ratingFrom > 0) filters['vote_average.gte'] = store.ratingFrom
     if (store.ratingTo < 10) filters['vote_average.lte'] = store.ratingTo
     if (store.voteCountMin > 0) filters['vote_count.gte'] = store.voteCountMin
     if (store.actors.length) filters.with_cast = store.actors.map((a) => a.id).join(',')
+    return filters
+  }
+
+  const buildMovieFilters = (): DiscoverMovieFilters => {
+    const filters: DiscoverMovieFilters = { ...buildCommonFilters() }
+    if (store.yearFrom !== MIN_YEAR) filters['primary_release_date.gte'] = `${store.yearFrom}-01-01`
+    if (store.yearTo !== CURRENT_YEAR) filters['primary_release_date.lte'] = `${store.yearTo}-12-31`
     if (store.director) filters.with_crew = String(store.director.id)
     return filters
   }
 
   const buildTVFilters = (): DiscoverTVFilters => {
-    const filters: DiscoverTVFilters = { sort_by: store.sortBy, page: store.page }
-    if (store.genres.length) filters.with_genres = store.genres.join('|')
-    if (store.countries.length) filters.with_origin_country = store.countries.join('|')
+    const filters: DiscoverTVFilters = { ...buildCommonFilters() }
     if (store.yearFrom !== MIN_YEAR) filters['first_air_date.gte'] = `${store.yearFrom}-01-01`
     if (store.yearTo !== CURRENT_YEAR) filters['first_air_date.lte'] = `${store.yearTo}-12-31`
-    if (store.ratingFrom > 0) filters['vote_average.gte'] = store.ratingFrom
-    if (store.ratingTo < 10) filters['vote_average.lte'] = store.ratingTo
-    if (store.voteCountMin > 0) filters['vote_count.gte'] = store.voteCountMin
-    if (store.actors.length) filters.with_cast = store.actors.map((a) => a.id).join(',')
     return filters
   }
 
