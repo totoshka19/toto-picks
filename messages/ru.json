@@ -33,7 +33,11 @@
     "ratingAsc": "По рейтингу ↑",
     "releaseDateDesc": "Сначала новые",
     "releaseDateAsc": "Сначала старые",
-    "voteCountDesc": "По количеству голосов"
+    "voteCountDesc": "По количеству голосов",
+    "popularity": "Популярность",
+    "rating": "Рейтинг",
+    "date": "Дата",
+    "votes": "Голоса"
   },
   "movie": {
     "rating": "Рейтинг",

@@ -33,7 +33,11 @@
     "ratingAsc": "Lowest rated",
     "releaseDateDesc": "Newest first",
     "releaseDateAsc": "Oldest first",
-    "voteCountDesc": "Most voted"
+    "voteCountDesc": "Most voted",
+    "popularity": "Popularity",
+    "rating": "Rating",
+    "date": "Date",
+    "votes": "Votes"
   },
   "movie": {
     "rating": "Rating",

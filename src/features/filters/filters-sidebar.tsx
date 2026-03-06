@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import { Slider } from '@/components/ui/slider'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -11,6 +12,8 @@ import { VOTE_COUNT_OPTIONS, POPULAR_COUNTRIES, MIN_YEAR, CURRENT_YEAR } from '@
 import { cn } from '@/lib/utils'
 import type { Genre } from '@/types/tmdb'
 import { useLocale } from 'next-intl'
+import { TrendingUp, Star, Calendar, Users, ArrowDown, ArrowUp } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
 interface SortOption {
   value: string
@@ -24,11 +27,53 @@ interface FiltersSidebarProps {
   sortOptions?: readonly SortOption[]
 }
 
+const SORT_ICON_MAP: Record<string, LucideIcon> = {
+  popularity: TrendingUp,
+  vote_average: Star,
+  primary_release_date: Calendar,
+  first_air_date: Calendar,
+  vote_count: Users,
+}
+
+const SORT_LABEL_KEY_MAP: Record<string, string> = {
+  popularity: 'popularity',
+  vote_average: 'rating',
+  primary_release_date: 'date',
+  first_air_date: 'date',
+  vote_count: 'votes',
+}
+
 export const FiltersSidebar = ({ genres, onApply, className, sortOptions }: FiltersSidebarProps) => {
   const t = useTranslations('filters')
   const tSort = useTranslations('sort')
   const locale = useLocale()
   const store = useFiltersStore()
+
+  const sortGroups = useMemo(() => {
+    if (!sortOptions) return []
+    const seen = new Set<string>()
+    const result: string[] = []
+    for (const opt of sortOptions) {
+      const base = opt.value.replace(/\.(desc|asc)$/, '')
+      if (!seen.has(base)) { seen.add(base); result.push(base) }
+    }
+    return result
+  }, [sortOptions])
+
+  const activeBase = store.sortBy.replace(/\.(desc|asc)$/, '')
+  const activeDirIsDesc = store.sortBy.endsWith('.desc')
+
+  const handleSortClick = (base: string) => {
+    if (activeBase === base) {
+      const hasAsc = sortOptions?.some(opt => opt.value === `${base}.asc`)
+      if (hasAsc) {
+        store.setSortBy(activeDirIsDesc ? `${base}.asc` : `${base}.desc`)
+      }
+    } else {
+      store.setSortBy(`${base}.desc`)
+    }
+    onApply?.()
+  }
 
   const handleApply = () => {
     onApply?.()
@@ -36,25 +81,37 @@ export const FiltersSidebar = ({ genres, onApply, className, sortOptions }: Filt
 
   return (
     <div className={cn('space-y-5', className)}>
-      {sortOptions && (
+      {sortOptions && sortGroups.length > 0 && (
         <>
           <div className="space-y-2">
             <label className="text-sm font-medium">{t('sort')}</label>
-            <Select
-              value={store.sortBy}
-              onValueChange={(v) => { store.setSortBy(v); onApply?.() }}
-            >
-              <SelectTrigger className="h-8 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {sortOptions.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {tSort(opt.labelKey as Parameters<typeof tSort>[0])}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="grid grid-cols-2 gap-1.5">
+              {sortGroups.map((base) => {
+                const Icon = SORT_ICON_MAP[base] ?? TrendingUp
+                const labelKey = SORT_LABEL_KEY_MAP[base] ?? 'popularity'
+                const isActive = activeBase === base
+                return (
+                  <button
+                    key={base}
+                    onClick={() => handleSortClick(base)}
+                    className={cn(
+                      'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-all',
+                      isActive
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'border-border text-muted-foreground hover:border-primary hover:text-primary'
+                    )}
+                  >
+                    <Icon className="h-3.5 w-3.5 shrink-0" />
+                    <span className="flex-1 text-left">{tSort(labelKey as Parameters<typeof tSort>[0])}</span>
+                    {isActive && (
+                      activeDirIsDesc
+                        ? <ArrowDown className="h-3 w-3 shrink-0" />
+                        : <ArrowUp className="h-3 w-3 shrink-0" />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
           </div>
           <Separator />
         </>
