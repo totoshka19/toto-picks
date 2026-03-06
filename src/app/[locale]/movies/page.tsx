@@ -13,9 +13,6 @@ export default async function MoviesPage() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 min-[576px]:px-8 py-8">
-      <h1 className="text-2xl font-bold mb-6">
-        {locale === 'ru' ? 'Фильмы' : 'Movies'}
-      </h1>
       <CatalogContent genres={genres} mediaType="movie" />
     </div>
   )

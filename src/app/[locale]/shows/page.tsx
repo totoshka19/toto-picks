@@ -13,9 +13,6 @@ export default async function ShowsPage() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 min-[576px]:px-8 py-8">
-      <h1 className="text-2xl font-bold mb-6">
-        {locale === 'ru' ? 'Сериалы' : 'TV Shows'}
-      </h1>
       <CatalogContent genres={genres} mediaType="tv" />
     </div>
   )
