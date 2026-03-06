@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useFiltersStore } from '@/store/filters'
 import { PersonSearchInput } from './person-search-input'
-import { VOTE_COUNT_OPTIONS, MIN_YEAR, CURRENT_YEAR } from '@/lib/constants'
+import { VOTE_COUNT_OPTIONS, MIN_YEAR, CURRENT_YEAR, FILM_COUNTRIES } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { Genre, TMDBCountry } from '@/types/tmdb'
 import { useLocale } from 'next-intl'
@@ -98,7 +98,9 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
 
   // Countries sorted alphabetically in current locale; filtered by search; excluding already-selected
   const filteredCountries = useMemo(() => {
-    const unselected = countries.filter(c => !store.countries.includes(c.iso_3166_1))
+    const unselected = countries.filter(c =>
+      FILM_COUNTRIES.has(c.iso_3166_1) && !store.countries.includes(c.iso_3166_1)
+    )
     const sorted = [...unselected].sort((a, b) =>
       getCountryName(a.iso_3166_1, a.english_name).localeCompare(
         getCountryName(b.iso_3166_1, b.english_name), locale

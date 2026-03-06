@@ -80,29 +80,41 @@ export const TMDB_LANGUAGE_MAP: Record<string, string> = {
 export const LOCALES = ['ru', 'en'] as const
 export const DEFAULT_LOCALE = 'ru' as const
 
-// Top countries for filter (ISO 3166-1 alpha-2)
-export const POPULAR_COUNTRIES = [
-  { code: 'US', nameRu: 'США', nameEn: 'USA' },
-  { code: 'GB', nameRu: 'Великобритания', nameEn: 'United Kingdom' },
-  { code: 'FR', nameRu: 'Франция', nameEn: 'France' },
-  { code: 'DE', nameRu: 'Германия', nameEn: 'Germany' },
-  { code: 'IT', nameRu: 'Италия', nameEn: 'Italy' },
-  { code: 'ES', nameRu: 'Испания', nameEn: 'Spain' },
-  { code: 'JP', nameRu: 'Япония', nameEn: 'Japan' },
-  { code: 'KR', nameRu: 'Южная Корея', nameEn: 'South Korea' },
-  { code: 'CN', nameRu: 'Китай', nameEn: 'China' },
-  { code: 'IN', nameRu: 'Индия', nameEn: 'India' },
-  { code: 'RU', nameRu: 'Россия', nameEn: 'Russia' },
-  { code: 'AU', nameRu: 'Австралия', nameEn: 'Australia' },
-  { code: 'CA', nameRu: 'Канада', nameEn: 'Canada' },
-  { code: 'SE', nameRu: 'Швеция', nameEn: 'Sweden' },
-  { code: 'DK', nameRu: 'Дания', nameEn: 'Denmark' },
-  { code: 'NO', nameRu: 'Норвегия', nameEn: 'Norway' },
-  { code: 'BR', nameRu: 'Бразилия', nameEn: 'Brazil' },
-  { code: 'MX', nameRu: 'Мексика', nameEn: 'Mexico' },
-  { code: 'TR', nameRu: 'Турция', nameEn: 'Turkey' },
-  { code: 'PL', nameRu: 'Польша', nameEn: 'Poland' },
-] as const
+// Countries with notable film/TV industries — used to filter the full TMDB list.
+// Excludes micro-territories, uninhabited islands, and overseas dependencies
+// that have no meaningful cinema production.
+export const FILM_COUNTRIES = new Set([
+  // North America
+  'US', 'CA', 'MX',
+  // Central America & Caribbean
+  'GT', 'SV', 'HN', 'NI', 'CR', 'PA', 'CU', 'DO', 'JM', 'HT', 'TT',
+  // South America
+  'BR', 'AR', 'CO', 'CL', 'PE', 'VE', 'UY', 'EC', 'BO', 'PY',
+  // Western Europe
+  'GB', 'FR', 'DE', 'IT', 'ES', 'PT', 'NL', 'BE', 'CH', 'AT', 'IE', 'LU',
+  // Nordic
+  'SE', 'DK', 'NO', 'FI', 'IS',
+  // Eastern Europe
+  'PL', 'CZ', 'SK', 'HU', 'RO', 'BG', 'GR', 'RS', 'HR', 'SI', 'BA', 'MK', 'AL', 'ME',
+  // Former Soviet
+  'RU', 'UA', 'BY', 'MD', 'GE', 'AM', 'AZ', 'KZ', 'UZ', 'KG', 'TJ', 'TM',
+  // Baltic
+  'LT', 'LV', 'EE',
+  // Middle East
+  'TR', 'IL', 'IR', 'LB', 'EG', 'SA', 'AE', 'IQ', 'JO', 'SY', 'YE', 'KW', 'QA', 'BH',
+  // Africa
+  'MA', 'TN', 'DZ', 'LY', 'NG', 'ZA', 'KE', 'GH', 'ET', 'SN', 'CM', 'CI', 'TZ', 'UG', 'RW',
+  // South & Central Asia
+  'IN', 'PK', 'BD', 'LK', 'NP', 'AF',
+  // East Asia
+  'CN', 'JP', 'KR', 'TW', 'HK', 'MN',
+  // Southeast Asia
+  'TH', 'VN', 'PH', 'ID', 'MY', 'SG', 'MM', 'KH', 'LA',
+  // Oceania
+  'AU', 'NZ', 'PG', 'FJ',
+  // Historical/special TMDB codes (notable cinematographic heritage)
+  'XC', 'XG', 'XK',
+])
 
 export const FAVORITES_STORAGE_KEY = 'toto-picks-favorites'
 export const WATCHED_STORAGE_KEY = 'toto-picks-watched'
