@@ -204,7 +204,16 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
       <div className="space-y-2">
         <label className="text-sm font-medium">{t('country')}</label>
 
-        {/* Selected countries — always shown as active chips */}
+        {/* Search input */}
+        <input
+          type="text"
+          value={countrySearch}
+          onChange={e => setCountrySearch(e.target.value)}
+          placeholder={t('countryPlaceholder')}
+          className="w-full h-8 px-3 text-xs rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-muted-foreground"
+        />
+
+        {/* Selected countries — shown below search as active chips */}
         {store.countries.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {store.countries.map((code) => {
@@ -222,17 +231,8 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
           </div>
         )}
 
-        {/* Search input */}
-        <input
-          type="text"
-          value={countrySearch}
-          onChange={e => setCountrySearch(e.target.value)}
-          placeholder={t('countryPlaceholder')}
-          className="w-full h-8 px-3 text-xs rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-muted-foreground"
-        />
-
         {/* Filtered country chips — scrollable */}
-        <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto">
+        <div className="flex flex-wrap gap-1.5 max-h-52 overflow-y-auto">
           {filteredCountries.map((country) => (
             <button
               key={country.iso_3166_1}
