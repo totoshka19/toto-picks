@@ -60,8 +60,11 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
     }
   }, [locale])
 
-  const getCountryName = (isoCode: string, fallback: string) =>
-    countryNames?.of(isoCode) ?? fallback
+  // If Intl has no translation it returns the code itself — detect and use fallback
+  const getCountryName = (isoCode: string, fallback: string) => {
+    const name = countryNames?.of(isoCode)
+    return name && name !== isoCode ? name : fallback
+  }
 
   const sortGroups = useMemo(() => {
     if (!sortOptions) return []
@@ -96,14 +99,15 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
   // Countries sorted alphabetically in current locale; filtered by search; excluding already-selected
   const filteredCountries = useMemo(() => {
     const unselected = countries.filter(c => !store.countries.includes(c.iso_3166_1))
-    const sorted = [...unselected].sort((a, b) => {
-      const nameA = countryNames?.of(a.iso_3166_1) ?? a.english_name
-      const nameB = countryNames?.of(b.iso_3166_1) ?? b.english_name
-      return nameA.localeCompare(nameB, locale)
-    })
+    const sorted = [...unselected].sort((a, b) =>
+      getCountryName(a.iso_3166_1, a.english_name).localeCompare(
+        getCountryName(b.iso_3166_1, b.english_name), locale
+      )
+    )
     if (!countrySearch.trim()) return sorted
     const q = countrySearch.toLowerCase()
-    return sorted.filter(c => (countryNames?.of(c.iso_3166_1) ?? c.english_name).toLowerCase().includes(q))
+    return sorted.filter(c => getCountryName(c.iso_3166_1, c.english_name).toLowerCase().includes(q))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countries, store.countries, countrySearch, countryNames, locale])
 
   return (
