@@ -25,7 +25,8 @@
     "apply": "Применить",
     "reset": "Сбросить",
     "openFilters": "Фильтры",
-    "any": "Любое"
+    "any": "Любое",
+    "searching": "Поиск..."
   },
   "sort": {
     "popularityDesc": "По популярности ↓",

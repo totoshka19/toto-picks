@@ -1,36 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import React from 'react'
 import Image from 'next/image'
-
-type FlagModule = Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>>
-let flagModuleCache: FlagModule | null = null
-
-const useFlagComponent = (code: string | undefined) => {
-  const [Flag, setFlag] = useState<React.ComponentType<React.SVGProps<SVGSVGElement>> | null>(null)
-  useEffect(() => {
-    if (!code) { setFlag(null); return }
-    const upper = code.toUpperCase()
-    if (flagModuleCache) {
-      setFlag(() => flagModuleCache![upper] ?? null)
-      return
-    }
-    import('country-flag-icons/react/3x2')
-      .then((mod) => {
-        flagModuleCache = mod as unknown as FlagModule
-        setFlag(() => flagModuleCache![upper] ?? null)
-      })
-      .catch(() => setFlag(null))
-  }, [code])
-  return Flag
-}
 import { Link } from '@/i18n/navigation'
 import { Heart, Star, Eye, Users } from 'lucide-react'
 import { cn, formatVotes } from '@/lib/utils'
 import { tmdbPoster } from '@/lib/tmdb'
 import { useFavoritesStore } from '@/store/favorites'
 import { useWatchedStore } from '@/store/watched'
+import { useFlagComponent } from '@/hooks/use-flag-component'
+import { useMounted } from '@/hooks/use-mounted'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { Movie, TVShow } from '@/types/tmdb'
 import type { MediaType } from '@/types/app'
@@ -52,8 +31,7 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
 
   const favorites = useFavoritesStore()
   const watchedStore = useWatchedStore()
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
+  const mounted = useMounted()
   const isFavorite = mounted && favorites.has(item.id, mediaType)
   const isWatched = mounted && watchedStore.has(item.id, mediaType)
 

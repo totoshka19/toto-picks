@@ -11,14 +11,10 @@ import { PersonSearchInput } from './person-search-input'
 import { VOTE_COUNT_OPTIONS, MIN_YEAR, CURRENT_YEAR, FILM_COUNTRIES, FILM_COUNTRIES_ORDERED } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { Genre, TMDBCountry } from '@/types/tmdb'
+import type { SortOption } from '@/types/app'
 import { useLocale } from 'next-intl'
 import { TrendingUp, Star, Calendar, Users, ArrowDown, ArrowUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-
-interface SortOption {
-  value: string
-  labelKey: string
-}
 
 interface FiltersSidebarProps {
   genres: Genre[]

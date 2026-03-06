@@ -25,7 +25,8 @@
     "apply": "Apply",
     "reset": "Reset",
     "openFilters": "Filters",
-    "any": "Any"
+    "any": "Any",
+    "searching": "Searching..."
   },
   "sort": {
     "popularityDesc": "Most popular",

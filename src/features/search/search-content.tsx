@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useQuery } from '@tanstack/react-query'
 import { tmdbSearch } from '@/lib/tmdb'

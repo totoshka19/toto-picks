@@ -7,7 +7,8 @@ import { MovieCard } from '@/components/cards/movie-card'
 import { EmptyState } from '@/components/empty-state'
 import { Eye } from 'lucide-react'
 import { tmdbMovies, tmdbShows } from '@/lib/tmdb'
-import type { Movie, TVShow, Genre } from '@/types/tmdb'
+import { storedItemToMedia } from '@/lib/helpers'
+import type { Genre } from '@/types/tmdb'
 
 interface Props {
   movieGenres: Genre[]
@@ -33,26 +34,6 @@ export const WatchedContent = ({ movieGenres, tvGenres }: Props) => {
     items.map((item, i) => [`${item.mediaType}-${item.id}`, metaQueries[i]?.data])
   )
 
-  const toMovieItem = (item: typeof items[number]): Movie | TVShow => {
-    const meta = metaMap.get(`${item.mediaType}-${item.id}`)
-    return ({
-      id: item.id,
-      ...(item.mediaType === 'movie'
-        ? { title: item.title, original_title: item.title, release_date: item.releaseDate }
-        : { name: item.title, original_name: item.title, first_air_date: item.releaseDate, origin_country: meta?.origin_country ?? item.originCountry ?? [] }),
-      overview: '',
-      poster_path: item.posterPath,
-      backdrop_path: null,
-      vote_average: item.voteAverage,
-      vote_count: meta?.vote_count ?? item.voteCount ?? 0,
-      genre_ids: item.genreIds,
-      popularity: 0,
-      original_language: '',
-      adult: false,
-      video: false,
-    } as Movie | TVShow)
-  }
-
   const movies = items.filter((i) => i.mediaType === 'movie')
   const shows = items.filter((i) => i.mediaType === 'tv')
 
@@ -77,7 +58,7 @@ export const WatchedContent = ({ movieGenres, tvGenres }: Props) => {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
             {movies.map((item) => (
-              <MovieCard key={item.id} item={toMovieItem(item)} mediaType="movie" genres={movieGenres} />
+              <MovieCard key={item.id} item={storedItemToMedia(item, metaMap.get(`${item.mediaType}-${item.id}`))} mediaType="movie" genres={movieGenres} />
             ))}
           </div>
         </section>
@@ -90,7 +71,7 @@ export const WatchedContent = ({ movieGenres, tvGenres }: Props) => {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
             {shows.map((item) => (
-              <MovieCard key={item.id} item={toMovieItem(item)} mediaType="tv" genres={tvGenres} />
+              <MovieCard key={item.id} item={storedItemToMedia(item, metaMap.get(`${item.mediaType}-${item.id}`))} mediaType="tv" genres={tvGenres} />
             ))}
           </div>
         </section>

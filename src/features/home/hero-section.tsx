@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { useTranslations, useLocale } from 'next-intl'
@@ -10,38 +10,11 @@ import { Button } from '@/components/ui/button'
 import { RatingBadge } from '@/components/rating-badge'
 import { tmdbBackdrop } from '@/lib/tmdb'
 import { formatVotes } from '@/lib/utils'
+import { getCountryName } from '@/lib/helpers'
+import { useFlagComponent } from '@/hooks/use-flag-component'
 import type { HeroItem } from '@/types/tmdb'
+
 const DRAG_THRESHOLD = 50
-
-type FlagModule = Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>>
-let flagModuleCache: FlagModule | null = null
-
-const useFlagComponent = (code: string | undefined) => {
-  const [Flag, setFlag] = useState<React.ComponentType<React.SVGProps<SVGSVGElement>> | null>(null)
-  useEffect(() => {
-    if (!code) { setFlag(null); return }
-    const upper = code.toUpperCase()
-    if (flagModuleCache) {
-      setFlag(() => flagModuleCache![upper] ?? null)
-      return
-    }
-    import('country-flag-icons/react/3x2')
-      .then((mod) => {
-        flagModuleCache = mod as unknown as FlagModule
-        setFlag(() => flagModuleCache![upper] ?? null)
-      })
-      .catch(() => setFlag(null))
-  }, [code])
-  return Flag
-}
-
-const getCountryName = (code: string, locale: string) => {
-  try {
-    return new Intl.DisplayNames([locale], { type: 'region' }).of(code.toUpperCase()) ?? code
-  } catch {
-    return code
-  }
-}
 
 
 interface HeroSectionProps {

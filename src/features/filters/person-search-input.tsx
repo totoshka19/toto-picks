@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { tmdbSearch, tmdbProfile } from '@/lib/tmdb'
 import { Input } from '@/components/ui/input'
 import { X, Search } from 'lucide-react'
@@ -17,6 +17,7 @@ interface PersonSearchInputProps {
 }
 
 export const PersonSearchInput = ({ value, onChange, placeholder }: PersonSearchInputProps) => {
+  const t = useTranslations('filters')
   const locale = useLocale()
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Person[]>([])
@@ -91,7 +92,7 @@ export const PersonSearchInput = ({ value, onChange, placeholder }: PersonSearch
       {isOpen && (results.length > 0 || loading) && (
         <div className="absolute top-full left-0 right-0 z-50 mt-1 rounded-md border border-border bg-popover shadow-lg overflow-hidden">
           {loading && (
-            <div className="px-3 py-2 text-xs text-muted-foreground">Поиск...</div>
+            <div className="px-3 py-2 text-xs text-muted-foreground">{t('searching')}</div>
           )}
           {results.map((person) => {
             const profileUrl = tmdbProfile(person.profile_path, 'sm')
