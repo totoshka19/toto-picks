@@ -41,6 +41,9 @@ export const PersonSearchInput = ({ value, onChange, placeholder }: PersonSearch
         setLoading(false)
       }
     }, 400)
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
   }, [query, locale])
 
   useEffect(() => {
