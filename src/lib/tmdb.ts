@@ -13,7 +13,7 @@ import type {
   DiscoverMovieFilters,
   DiscoverTVFilters,
 } from '@/types/tmdb'
-import { TMDB_IMAGE_BASE, TMDB_LANGUAGE_MAP } from './constants'
+import { TMDB_IMAGE_BASE, TMDB_IMAGE_SIZES, TMDB_LANGUAGE_MAP } from './constants'
 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3'
 
@@ -65,18 +65,15 @@ export function tmdbImage(
 }
 
 export function tmdbPoster(path: string | null | undefined, size: 'sm' | 'md' | 'lg' | 'xl' = 'md'): string | null {
-  const sizes = { sm: 'w200', md: 'w342', lg: 'w500', xl: 'w780' }
-  return tmdbImage(path, sizes[size])
+  return tmdbImage(path, TMDB_IMAGE_SIZES.poster[size])
 }
 
 export function tmdbBackdrop(path: string | null | undefined, size: 'sm' | 'md' | 'lg' = 'lg'): string | null {
-  const sizes = { sm: 'w300', md: 'w780', lg: 'w1280' }
-  return tmdbImage(path, sizes[size])
+  return tmdbImage(path, TMDB_IMAGE_SIZES.backdrop[size])
 }
 
 export function tmdbProfile(path: string | null | undefined, size: 'sm' | 'md' | 'lg' = 'md'): string | null {
-  const sizes = { sm: 'w45', md: 'w185', lg: 'h632' }
-  return tmdbImage(path, sizes[size])
+  return tmdbImage(path, TMDB_IMAGE_SIZES.profile[size])
 }
 
 // ─── Movies ──────────────────────────────────────────────────────────────────
