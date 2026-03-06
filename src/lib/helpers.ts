@@ -1,17 +1,9 @@
 import type { FavoriteItem } from '@/types/app'
 import type { Movie, TVShow } from '@/types/tmdb'
 
-interface MediaMeta {
-  origin_country?: string[]
-  vote_count?: number
-}
-
 /** Converts a stored FavoriteItem back into a Movie | TVShow shape for rendering.
- *  Pass `meta` from a live TMDB query to fill in fields that may have changed. */
-export const storedItemToMedia = (
-  item: FavoriteItem,
-  meta?: MediaMeta
-): Movie | TVShow =>
+ *  All data is read from the store — no additional API calls needed. */
+export const storedItemToMedia = (item: FavoriteItem): Movie | TVShow =>
   ({
     id: item.id,
     ...(item.mediaType === 'movie'
@@ -20,13 +12,13 @@ export const storedItemToMedia = (
           name: item.title,
           original_name: item.title,
           first_air_date: item.releaseDate,
-          origin_country: meta?.origin_country ?? item.originCountry ?? [],
+          origin_country: item.originCountry ?? [],
         }),
     overview: '',
     poster_path: item.posterPath,
     backdrop_path: null,
     vote_average: item.voteAverage,
-    vote_count: meta?.vote_count ?? item.voteCount ?? 0,
+    vote_count: item.voteCount ?? 0,
     genre_ids: item.genreIds,
     popularity: 0,
     original_language: '',

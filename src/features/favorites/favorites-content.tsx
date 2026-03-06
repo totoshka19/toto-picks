@@ -1,12 +1,10 @@
 'use client'
 
-import { useTranslations, useLocale } from 'next-intl'
-import { useQueries } from '@tanstack/react-query'
+import { useTranslations } from 'next-intl'
 import { useFavoritesStore } from '@/store/favorites'
 import { MovieCard } from '@/components/cards/movie-card'
 import { EmptyState } from '@/components/empty-state'
 import { Heart } from 'lucide-react'
-import { tmdbMovies, tmdbShows } from '@/lib/tmdb'
 import { storedItemToMedia } from '@/lib/helpers'
 import type { Genre } from '@/types/tmdb'
 
@@ -17,22 +15,7 @@ interface Props {
 
 export const FavoritesContent = ({ movieGenres, tvGenres }: Props) => {
   const t = useTranslations('favorites')
-  const locale = useLocale()
   const items = useFavoritesStore((s) => s.items)
-
-  const metaQueries = useQueries({
-    queries: items.map((item) => ({
-      queryKey: ['item-meta', item.mediaType, item.id, locale],
-      queryFn: () => item.mediaType === 'movie'
-        ? tmdbMovies.meta(item.id, locale)
-        : tmdbShows.meta(item.id, locale),
-      staleTime: 10 * 60 * 1000,
-    })),
-  })
-
-  const metaMap = new Map(
-    items.map((item, i) => [`${item.mediaType}-${item.id}`, metaQueries[i]?.data])
-  )
 
   const movies = items.filter((i) => i.mediaType === 'movie')
   const shows = items.filter((i) => i.mediaType === 'tv')
@@ -58,7 +41,7 @@ export const FavoritesContent = ({ movieGenres, tvGenres }: Props) => {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
             {movies.map((item) => (
-              <MovieCard key={item.id} item={storedItemToMedia(item, metaMap.get(`${item.mediaType}-${item.id}`))} mediaType="movie" genres={movieGenres} />
+              <MovieCard key={item.id} item={storedItemToMedia(item)} mediaType="movie" genres={movieGenres} />
             ))}
           </div>
         </section>
@@ -71,7 +54,7 @@ export const FavoritesContent = ({ movieGenres, tvGenres }: Props) => {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
             {shows.map((item) => (
-              <MovieCard key={item.id} item={storedItemToMedia(item, metaMap.get(`${item.mediaType}-${item.id}`))} mediaType="tv" genres={tvGenres} />
+              <MovieCard key={item.id} item={storedItemToMedia(item)} mediaType="tv" genres={tvGenres} />
             ))}
           </div>
         </section>
