@@ -47,6 +47,24 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
   const locale = useLocale()
   const store = useFiltersStore()
   const [countrySearch, setCountrySearch] = useState('')
+
+  // Draft state for year inputs — allows free typing without clamping mid-edit
+  const [yearFromDraft, setYearFromDraft] = useState(String(store.yearFrom))
+  const [yearToDraft, setYearToDraft] = useState(String(store.yearTo))
+  // Keep drafts in sync when slider moves
+  useEffect(() => { setYearFromDraft(String(store.yearFrom)) }, [store.yearFrom])
+  useEffect(() => { setYearToDraft(String(store.yearTo)) }, [store.yearTo])
+
+  const commitYearFrom = () => {
+    const val = Math.min(Math.max(parseInt(yearFromDraft) || MIN_YEAR, MIN_YEAR), store.yearTo)
+    store.setYearFrom(val)
+    setYearFromDraft(String(val))
+  }
+  const commitYearTo = () => {
+    const val = Math.min(Math.max(parseInt(yearToDraft) || CURRENT_YEAR, store.yearFrom), CURRENT_YEAR)
+    store.setYearTo(val)
+    setYearToDraft(String(val))
+  }
   // Locale-aware country name resolver — initialised client-side only via useEffect
   // to avoid SSR/client Intl ICU divergence (Node and browsers ship different ICU
   // datasets, e.g. Node: "Гонконг", browser: "Гонконг (САР)").
@@ -256,10 +274,28 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
       {/* Year range */}
       <div className="space-y-3">
         <label className="text-sm font-medium">{t('year')}</label>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-          <span>{store.yearFrom}</span>
-          <span>—</span>
-          <span>{store.yearTo}</span>
+        <div className="flex items-center gap-2 mt-1">
+          <input
+            type="number"
+            min={MIN_YEAR}
+            max={CURRENT_YEAR}
+            value={yearFromDraft}
+            onChange={e => setYearFromDraft(e.target.value)}
+            onBlur={commitYearFrom}
+            onKeyDown={e => e.key === 'Enter' && commitYearFrom()}
+            className="w-16 h-7 px-2 text-xs rounded-md border border-border bg-background text-center focus:outline-none focus:ring-1 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          />
+          <span className="text-xs text-muted-foreground">—</span>
+          <input
+            type="number"
+            min={MIN_YEAR}
+            max={CURRENT_YEAR}
+            value={yearToDraft}
+            onChange={e => setYearToDraft(e.target.value)}
+            onBlur={commitYearTo}
+            onKeyDown={e => e.key === 'Enter' && commitYearTo()}
+            className="w-16 h-7 px-2 text-xs rounded-md border border-border bg-background text-center focus:outline-none focus:ring-1 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          />
         </div>
         <Slider
           min={MIN_YEAR}
