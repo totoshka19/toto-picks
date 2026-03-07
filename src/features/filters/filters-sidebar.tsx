@@ -388,7 +388,7 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
         />
       </div>
 
-      <Separator />
+      <Separator className="lg:hidden" />
 
       <Button onClick={handleApply} className="w-full lg:hidden">
         {t('apply')}
