@@ -44,6 +44,8 @@ export const SORT_OPTIONS_TV = [
   { value: 'vote_count.asc', labelKey: 'voteCountAsc' },
 ] as const
 
+export const VOTE_COUNT_MAX = 30000
+
 export const VOTE_COUNT_OPTIONS = [
   { value: 0, labelKey: 'any' },
   { value: 100, label: '100+' },
@@ -51,7 +53,7 @@ export const VOTE_COUNT_OPTIONS = [
   { value: 1000, label: '1 000+' },
   { value: 5000, label: '5 000+' },
   { value: 10000, label: '10 000+' },
-  { value: 50000, label: '50 000+' },
+  { value: VOTE_COUNT_MAX, label: `${VOTE_COUNT_MAX / 1000} 000+` },
 ] as const
 
 export const CURRENT_YEAR = new Date().getFullYear()
@@ -66,7 +68,7 @@ export const DEFAULT_FILTERS = {
   ratingFrom: 0,
   ratingTo: 10,
   voteCountMin: 0,
-  voteCountMax: 50000,
+  voteCountMax: VOTE_COUNT_MAX,
   actors: [] as { id: number; name: string }[],
   director: null as { id: number; name: string } | null,
   sortBy: 'popularity.desc',

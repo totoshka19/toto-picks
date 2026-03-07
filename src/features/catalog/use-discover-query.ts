@@ -6,7 +6,7 @@ import { useFiltersStore } from '@/store/filters'
 import { tmdbMovies, tmdbShows, tmdbPerson } from '@/lib/tmdb'
 import type { TMDBResponse, Movie, TVShow, DiscoverBaseFilters, DiscoverMovieFilters, DiscoverTVFilters } from '@/types/tmdb'
 import type { MediaType, PersonFilter } from '@/types/app'
-import { CURRENT_YEAR, MIN_YEAR } from '@/lib/constants'
+import { CURRENT_YEAR, MIN_YEAR, VOTE_COUNT_MAX } from '@/lib/constants'
 
 export type DiscoverResult = TMDBResponse<Movie | TVShow>
 type QueryKey = (string | number | number[] | string[] | PersonFilter[] | PersonFilter | null)[]
@@ -78,7 +78,7 @@ export const useDiscoverQuery = (mediaType: MediaType) => {
     if (store.ratingFrom > 0) filters['vote_average.gte'] = store.ratingFrom
     if (store.ratingTo < 10) filters['vote_average.lte'] = store.ratingTo
     if (store.voteCountMin > 0) filters['vote_count.gte'] = store.voteCountMin
-    if (store.voteCountMax < 50000) filters['vote_count.lte'] = store.voteCountMax
+    if (store.voteCountMax < VOTE_COUNT_MAX) filters['vote_count.lte'] = store.voteCountMax
     if (store.actors.length) filters.with_cast = store.actors.map((a) => a.id).join(',')
     return filters
   }

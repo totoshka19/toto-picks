@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useFiltersStore } from '@/store/filters'
 import { PersonSearchInput } from './person-search-input'
-import { MIN_YEAR, CURRENT_YEAR, FILM_COUNTRIES, FILM_COUNTRIES_ORDERED } from '@/lib/constants'
+import { MIN_YEAR, CURRENT_YEAR, FILM_COUNTRIES, FILM_COUNTRIES_ORDERED, VOTE_COUNT_MAX } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { Genre, TMDBCountry } from '@/types/tmdb'
 import type { SortOption } from '@/types/app'
@@ -39,7 +39,6 @@ const SORT_LABEL_KEY_MAP: Record<string, string> = {
   vote_count: 'votes',
 }
 
-const VOTE_COUNT_MAX = 50000
 
 export const FiltersSidebar = ({ genres, countries, onApply, className, sortOptions }: FiltersSidebarProps) => {
   const t = useTranslations('filters')

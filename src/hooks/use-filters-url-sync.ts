@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { useFiltersStore } from '@/store/filters'
-import { DEFAULT_FILTERS, MIN_YEAR, CURRENT_YEAR } from '@/lib/constants'
+import { DEFAULT_FILTERS, MIN_YEAR, CURRENT_YEAR, VOTE_COUNT_MAX } from '@/lib/constants'
 
 // Reads URL params on mount and syncs them to the store — only if URL has params.
 // If no URL params, the persisted localStorage state is used as-is.
@@ -41,7 +41,7 @@ export const useFiltersUrlSync = () => {
     store.setRatingFrom(ratingFrom ? Number(ratingFrom) : 0)
     store.setRatingTo(ratingTo ? Number(ratingTo) : 10)
     store.setVoteCountMin(voteCountMin ? Number(voteCountMin) : 0)
-    store.setVoteCountMax(voteCountMax ? Number(voteCountMax) : 50000)
+    store.setVoteCountMax(voteCountMax ? Number(voteCountMax) : VOTE_COUNT_MAX)
     store.setSortBy(sortBy ?? DEFAULT_FILTERS.sortBy)
     store.setPage(page ? Number(page) : 1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,7 +57,7 @@ export const useFiltersUrlSync = () => {
     if (store.ratingFrom !== 0) params.set('ratingFrom', String(store.ratingFrom))
     if (store.ratingTo !== 10) params.set('ratingTo', String(store.ratingTo))
     if (store.voteCountMin !== 0) params.set('voteCountMin', String(store.voteCountMin))
-    if (store.voteCountMax !== 50000) params.set('voteCountMax', String(store.voteCountMax))
+    if (store.voteCountMax !== VOTE_COUNT_MAX) params.set('voteCountMax', String(store.voteCountMax))
     if (store.sortBy !== DEFAULT_FILTERS.sortBy) params.set('sortBy', store.sortBy)
     if (store.page !== 1) params.set('page', String(store.page))
 
