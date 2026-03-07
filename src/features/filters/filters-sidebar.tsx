@@ -15,6 +15,7 @@ import type { SortOption } from '@/types/app'
 import { useLocale } from 'next-intl'
 import { TrendingUp, Star, Calendar, Users, ArrowDown, ArrowUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { useMounted } from '@/hooks/use-mounted'
 
 interface FiltersSidebarProps {
   genres: Genre[]
@@ -46,15 +47,18 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
   const locale = useLocale()
   const store = useFiltersStore()
   const [countrySearch, setCountrySearch] = useState('')
+  const mounted = useMounted()
 
-  // Locale-aware country name resolver — uses browser/Node built-in Intl API
+  // Locale-aware country name resolver — only active after mount to avoid SSR/client
+  // Intl ICU data divergence (e.g. Node returns "Гонконг", browser "Гонконг (САР)").
   const countryNames = useMemo(() => {
+    if (!mounted) return null
     try {
       return new Intl.DisplayNames([locale], { type: 'region' })
     } catch {
       return null
     }
-  }, [locale])
+  }, [locale, mounted])
 
   // If Intl has no translation it returns the code itself — detect and use fallback
   const getCountryName = (isoCode: string, fallback: string) => {
