@@ -3,12 +3,11 @@
 import { useMemo, useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { Slider } from '@/components/ui/slider'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useFiltersStore } from '@/store/filters'
 import { PersonSearchInput } from './person-search-input'
-import { VOTE_COUNT_OPTIONS, MIN_YEAR, CURRENT_YEAR, FILM_COUNTRIES, FILM_COUNTRIES_ORDERED } from '@/lib/constants'
+import { MIN_YEAR, CURRENT_YEAR, FILM_COUNTRIES, FILM_COUNTRIES_ORDERED } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import type { Genre, TMDBCountry } from '@/types/tmdb'
 import type { SortOption } from '@/types/app'
@@ -39,6 +38,8 @@ const SORT_LABEL_KEY_MAP: Record<string, string> = {
   first_air_date: 'date',
   vote_count: 'votes',
 }
+
+const VOTE_COUNT_MAX = 50000
 
 export const FiltersSidebar = ({ genres, countries, onApply, className, sortOptions }: FiltersSidebarProps) => {
   const t = useTranslations('filters')
@@ -298,23 +299,25 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
       <Separator />
 
       {/* Vote count */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         <label className="text-sm font-medium">{t('votes')}</label>
-        <Select
-          value={String(store.voteCountMin)}
-          onValueChange={(v) => store.setVoteCountMin(Number(v))}
-        >
-          <SelectTrigger className="h-8 text-sm mt-1">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {VOTE_COUNT_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={String(opt.value)}>
-                {'labelKey' in opt ? t(opt.labelKey as Parameters<typeof t>[0]) : opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+          <span>
+            {store.voteCountMin === 0
+              ? t('any')
+              : store.voteCountMin >= 1000
+                ? `${store.voteCountMin / 1000} 000+`
+                : `${store.voteCountMin}+`}
+          </span>
+        </div>
+        <Slider
+          min={0}
+          max={VOTE_COUNT_MAX}
+          step={1000}
+          value={[store.voteCountMin]}
+          onValueChange={([v]) => store.setVoteCountMin(v)}
+          className="mt-1"
+        />
       </div>
 
       <Separator />
