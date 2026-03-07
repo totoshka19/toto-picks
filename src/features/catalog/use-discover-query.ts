@@ -69,6 +69,8 @@ export const useDiscoverQuery = (mediaType: MediaType) => {
   const locale = useLocale()
   const store = useFiltersStore()
 
+  const isDirectorMode = mediaType === 'movie' && !!store.director
+
   const buildCommonFilters = (): DiscoverBaseFilters => {
     const filters: DiscoverBaseFilters = { sort_by: store.sortBy, page: store.page }
     if (store.genres.length) filters.with_genres = store.genres.join('|')
@@ -84,7 +86,6 @@ export const useDiscoverQuery = (mediaType: MediaType) => {
     const filters: DiscoverMovieFilters = { ...buildCommonFilters() }
     if (store.yearFrom !== MIN_YEAR) filters['primary_release_date.gte'] = `${store.yearFrom}-01-01`
     if (store.yearTo !== CURRENT_YEAR) filters['primary_release_date.lte'] = `${store.yearTo}-12-31`
-    if (store.director) filters.with_crew = String(store.director.id)
     return filters
   }
 
@@ -95,6 +96,20 @@ export const useDiscoverQuery = (mediaType: MediaType) => {
     return filters
   }
 
+  // ── Query 1: Director filmography ─────────────────────────────────────────
+  // Key does NOT include `page` — cache persists across page changes.
+  // Only refetches when director or locale changes (or after 30 min staleTime).
+  // TMDB /discover?with_crew indexes crew partially — /person/{id}/movie_credits
+  // returns the complete directorial filmography, so we use that instead.
+  const filmographyQuery = useQuery({
+    queryKey: ['person-credits', store.director?.id ?? null, locale] as const,
+    queryFn: () => tmdbPerson.movieCredits(store.director!.id, locale),
+    enabled: isDirectorMode,
+    staleTime: 1000 * 60 * 30, // 30 min — filmography rarely changes
+  })
+
+  // ── Query 2: Standard TMDB discover ──────────────────────────────────────
+  // Disabled while director mode is active (filmographyQuery handles that case).
   const queryKey: QueryKey = [
     'discover', mediaType, locale,
     store.genres, store.countries,
@@ -105,22 +120,33 @@ export const useDiscoverQuery = (mediaType: MediaType) => {
     store.sortBy, store.page,
   ]
 
-  const queryFn = async (): Promise<DiscoverResult> => {
-    // ── Director filter: use /person/{id}/movie_credits for full filmography ──
-    // TMDB /discover?with_crew only indexes crew partially — many films are missing.
-    // /person/{id}/movie_credits returns the complete directorial filmography.
-    if (mediaType === 'movie' && store.director) {
-      const credits = await tmdbPerson.movieCredits(store.director.id, locale)
+  const discoverQuery = useQuery<DiscoverResult, Error, DiscoverResult, QueryKey>({
+    queryKey,
+    queryFn: async () => {
+      if (mediaType === 'movie') {
+        const res = await tmdbMovies.discover(buildMovieFilters(), locale)
+        return res as DiscoverResult
+      }
+      const res = await tmdbShows.discover(buildTVFilters(), locale)
+      return res as DiscoverResult
+    },
+    enabled: !isDirectorMode,
+    placeholderData: (prev) => prev,
+    staleTime: 1000 * 60 * 5,
+  })
 
-      // Keep only directorial credits, deduplicate by id (a film can appear multiple times)
+  // ── Director mode: paginate cached filmography without network calls ───────
+  if (isDirectorMode) {
+    let data: DiscoverResult | undefined
+
+    if (filmographyQuery.data) {
       const seen = new Set<number>()
-      const directorMovies = credits.crew.filter((m) => {
+      const directorMovies = filmographyQuery.data.crew.filter((m) => {
         if (m.job !== 'Director' || seen.has(m.id)) return false
         seen.add(m.id)
         return true
       }) as DirectorMovie[]
 
-      // Apply other active filters client-side
       const filtered = applyClientFilters(
         directorMovies,
         store.genres,
@@ -137,7 +163,7 @@ export const useDiscoverQuery = (mediaType: MediaType) => {
       const start = (store.page - 1) * ITEMS_PER_PAGE
       const results = sorted.slice(start, start + ITEMS_PER_PAGE)
 
-      return {
+      data = {
         page: store.page,
         results: results as (Movie | TVShow)[],
         total_pages: totalPages,
@@ -145,19 +171,8 @@ export const useDiscoverQuery = (mediaType: MediaType) => {
       }
     }
 
-    // ── Default path: TMDB /discover ─────────────────────────────────────────
-    if (mediaType === 'movie') {
-      const res = await tmdbMovies.discover(buildMovieFilters(), locale)
-      return res as DiscoverResult
-    }
-    const res = await tmdbShows.discover(buildTVFilters(), locale)
-    return res as DiscoverResult
+    return { ...filmographyQuery, data }
   }
 
-  return useQuery<DiscoverResult, Error, DiscoverResult, QueryKey>({
-    queryKey,
-    queryFn,
-    placeholderData: (prev) => prev,
-    staleTime: 1000 * 60 * 5,
-  })
+  return discoverQuery
 }
