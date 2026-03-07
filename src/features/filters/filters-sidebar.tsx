@@ -179,7 +179,7 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
       {/* Genres */}
       <div className="space-y-2">
         <label className="text-sm font-medium">{t('genres')}</label>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-1.5 mt-1">
           {genres.map((genre) => (
             <button
               key={genre.id}
@@ -209,7 +209,7 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
           value={countrySearch}
           onChange={e => setCountrySearch(e.target.value)}
           placeholder={t('countryPlaceholder')}
-          className="w-full h-8 px-3 text-xs rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-muted-foreground"
+          className="w-full h-8 px-3 text-xs rounded-md border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-muted-foreground mt-1"
         />
 
         {/* Selected countries — shown below search as active chips */}
@@ -255,7 +255,7 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
       {/* Year range */}
       <div className="space-y-3">
         <label className="text-sm font-medium">{t('year')}</label>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
           <span>{store.yearFrom}</span>
           <span>—</span>
           <span>{store.yearTo}</span>
@@ -278,7 +278,7 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
       {/* Rating range */}
       <div className="space-y-3">
         <label className="text-sm font-medium">{t('rating')}</label>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
           <span>{store.ratingFrom.toFixed(1)}</span>
           <span>—</span>
           <span>{store.ratingTo.toFixed(1)}</span>
@@ -304,7 +304,7 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
           value={String(store.voteCountMin)}
           onValueChange={(v) => store.setVoteCountMin(Number(v))}
         >
-          <SelectTrigger className="h-8 text-sm">
+          <SelectTrigger className="h-8 text-sm mt-1">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
