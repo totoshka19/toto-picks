@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { Slider } from '@/components/ui/slider'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -15,7 +15,6 @@ import type { SortOption } from '@/types/app'
 import { useLocale } from 'next-intl'
 import { TrendingUp, Star, Calendar, Users, ArrowDown, ArrowUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import { useMounted } from '@/hooks/use-mounted'
 
 interface FiltersSidebarProps {
   genres: Genre[]
@@ -47,18 +46,18 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
   const locale = useLocale()
   const store = useFiltersStore()
   const [countrySearch, setCountrySearch] = useState('')
-  const mounted = useMounted()
-
-  // Locale-aware country name resolver — only active after mount to avoid SSR/client
-  // Intl ICU data divergence (e.g. Node returns "Гонконг", browser "Гонконг (САР)").
-  const countryNames = useMemo(() => {
-    if (!mounted) return null
+  // Locale-aware country name resolver — initialised client-side only via useEffect
+  // to avoid SSR/client Intl ICU divergence (Node and browsers ship different ICU
+  // datasets, e.g. Node: "Гонконг", browser: "Гонконг (САР)").
+  // null on the server and during hydration → both renders use english_name fallback.
+  const [countryNames, setCountryNames] = useState<Intl.DisplayNames | null>(null)
+  useEffect(() => {
     try {
-      return new Intl.DisplayNames([locale], { type: 'region' })
+      setCountryNames(new Intl.DisplayNames([locale], { type: 'region' }))
     } catch {
-      return null
+      setCountryNames(null)
     }
-  }, [locale, mounted])
+  }, [locale])
 
   // If Intl has no translation it returns the code itself — detect and use fallback
   const getCountryName = (isoCode: string, fallback: string) => {
