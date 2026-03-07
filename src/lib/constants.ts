@@ -66,6 +66,7 @@ export const DEFAULT_FILTERS = {
   ratingFrom: 0,
   ratingTo: 10,
   voteCountMin: 0,
+  voteCountMax: 50000,
   actors: [] as { id: number; name: string }[],
   director: null as { id: number; name: string } | null,
   sortBy: 'popularity.desc',

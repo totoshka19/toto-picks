@@ -27,6 +27,7 @@ export interface FilterState {
   ratingFrom: number
   ratingTo: number
   voteCountMin: number
+  voteCountMax: number
   actors: PersonFilter[]
   director: PersonFilter | null
   sortBy: string

@@ -23,13 +23,14 @@ export const useFiltersUrlSync = () => {
     const ratingFrom = searchParams.get('ratingFrom')
     const ratingTo = searchParams.get('ratingTo')
     const voteCountMin = searchParams.get('voteCountMin')
+    const voteCountMax = searchParams.get('voteCountMax')
     const sortBy = searchParams.get('sortBy')
     const page = searchParams.get('page')
 
     // If the URL has no filter params, keep persisted state from localStorage
     const hasUrlParams = !!(
       genres || countries || yearFrom || yearTo ||
-      ratingFrom || ratingTo || voteCountMin || sortBy || page
+      ratingFrom || ratingTo || voteCountMin || voteCountMax || sortBy || page
     )
     if (!hasUrlParams) return
 
@@ -40,6 +41,7 @@ export const useFiltersUrlSync = () => {
     store.setRatingFrom(ratingFrom ? Number(ratingFrom) : 0)
     store.setRatingTo(ratingTo ? Number(ratingTo) : 10)
     store.setVoteCountMin(voteCountMin ? Number(voteCountMin) : 0)
+    store.setVoteCountMax(voteCountMax ? Number(voteCountMax) : 50000)
     store.setSortBy(sortBy ?? DEFAULT_FILTERS.sortBy)
     store.setPage(page ? Number(page) : 1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,6 +57,7 @@ export const useFiltersUrlSync = () => {
     if (store.ratingFrom !== 0) params.set('ratingFrom', String(store.ratingFrom))
     if (store.ratingTo !== 10) params.set('ratingTo', String(store.ratingTo))
     if (store.voteCountMin !== 0) params.set('voteCountMin', String(store.voteCountMin))
+    if (store.voteCountMax !== 50000) params.set('voteCountMax', String(store.voteCountMax))
     if (store.sortBy !== DEFAULT_FILTERS.sortBy) params.set('sortBy', store.sortBy)
     if (store.page !== 1) params.set('page', String(store.page))
 

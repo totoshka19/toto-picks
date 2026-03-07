@@ -302,20 +302,19 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
       <div className="space-y-3">
         <label className="text-sm font-medium">{t('votes')}</label>
         <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-          <span>
-            {store.voteCountMin === 0
-              ? t('any')
-              : store.voteCountMin >= 1000
-                ? `${store.voteCountMin / 1000} 000+`
-                : `${store.voteCountMin}+`}
-          </span>
+          <span>{store.voteCountMin === 0 ? '0' : `${store.voteCountMin / 1000}K`}</span>
+          <span>—</span>
+          <span>{store.voteCountMax >= VOTE_COUNT_MAX ? `${VOTE_COUNT_MAX / 1000}K+` : `${store.voteCountMax / 1000}K`}</span>
         </div>
         <Slider
           min={0}
           max={VOTE_COUNT_MAX}
           step={1000}
-          value={[store.voteCountMin]}
-          onValueChange={([v]) => store.setVoteCountMin(v)}
+          value={[store.voteCountMin, store.voteCountMax]}
+          onValueChange={([min, max]) => {
+            store.setVoteCountMin(min)
+            store.setVoteCountMax(max)
+          }}
           className="mt-1"
         />
       </div>

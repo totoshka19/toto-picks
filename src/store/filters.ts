@@ -17,6 +17,7 @@ interface FiltersStore extends FilterState {
   setRatingFrom: (rating: number) => void
   setRatingTo: (rating: number) => void
   setVoteCountMin: (count: number) => void
+  setVoteCountMax: (count: number) => void
   setActors: (actors: PersonFilter[]) => void
   addActor: (actor: PersonFilter) => void
   removeActor: (id: number) => void
@@ -57,6 +58,7 @@ const createFiltersStore = (name: string) =>
         setRatingTo: (ratingTo) => set({ ratingTo, page: 1 }),
 
         setVoteCountMin: (voteCountMin) => set({ voteCountMin, page: 1 }),
+        setVoteCountMax: (voteCountMax) => set({ voteCountMax, page: 1 }),
 
         setActors: (actors) => set({ actors, page: 1 }),
         addActor: (actor) =>

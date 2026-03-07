@@ -78,6 +78,7 @@ export const useDiscoverQuery = (mediaType: MediaType) => {
     if (store.ratingFrom > 0) filters['vote_average.gte'] = store.ratingFrom
     if (store.ratingTo < 10) filters['vote_average.lte'] = store.ratingTo
     if (store.voteCountMin > 0) filters['vote_count.gte'] = store.voteCountMin
+    if (store.voteCountMax < 50000) filters['vote_count.lte'] = store.voteCountMax
     if (store.actors.length) filters.with_cast = store.actors.map((a) => a.id).join(',')
     return filters
   }
@@ -115,7 +116,7 @@ export const useDiscoverQuery = (mediaType: MediaType) => {
     store.genres, store.countries,
     store.yearFrom, store.yearTo,
     store.ratingFrom, store.ratingTo,
-    store.voteCountMin,
+    store.voteCountMin, store.voteCountMax,
     store.actors, store.director,
     store.sortBy, store.page,
   ]
