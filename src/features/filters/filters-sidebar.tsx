@@ -56,12 +56,16 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
   useEffect(() => { setYearToDraft(String(store.yearTo)) }, [store.yearTo])
 
   const commitYearFrom = () => {
-    const val = Math.min(Math.max(parseInt(yearFromDraft) || MIN_YEAR, MIN_YEAR), store.yearTo)
+    const parsed = parseInt(yearFromDraft)
+    if (!parsed) { setYearFromDraft(String(store.yearFrom)); return }
+    const val = Math.min(parsed, store.yearTo)
     store.setYearFrom(val)
     setYearFromDraft(String(val))
   }
   const commitYearTo = () => {
-    const val = Math.min(Math.max(parseInt(yearToDraft) || CURRENT_YEAR, store.yearFrom), CURRENT_YEAR)
+    const parsed = parseInt(yearToDraft)
+    if (!parsed) { setYearToDraft(String(store.yearTo)); return }
+    const val = Math.max(parsed, store.yearFrom)
     store.setYearTo(val)
     setYearToDraft(String(val))
   }
@@ -277,8 +281,6 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
         <div className="flex items-center gap-2 mt-1">
           <input
             type="number"
-            min={MIN_YEAR}
-            max={CURRENT_YEAR}
             value={yearFromDraft}
             onChange={e => setYearFromDraft(e.target.value)}
             onBlur={commitYearFrom}
@@ -288,8 +290,6 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
           <span className="text-xs text-muted-foreground">—</span>
           <input
             type="number"
-            min={MIN_YEAR}
-            max={CURRENT_YEAR}
             value={yearToDraft}
             onChange={e => setYearToDraft(e.target.value)}
             onBlur={commitYearTo}
@@ -298,8 +298,8 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
           />
         </div>
         <Slider
-          min={MIN_YEAR}
-          max={CURRENT_YEAR}
+          min={Math.min(store.yearFrom, MIN_YEAR)}
+          max={Math.max(store.yearTo, CURRENT_YEAR)}
           step={1}
           value={[store.yearFrom, store.yearTo]}
           onValueChange={([from, to]) => {
