@@ -357,7 +357,7 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
       <Separator />
 
       {/* Actor search */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         <label className="text-sm font-medium">{t('actor')}</label>
         {store.actors.map((actor) => (
           <div key={actor.id} className="flex items-center gap-2 rounded-md border border-border bg-secondary px-3 py-1.5 text-sm">
@@ -379,7 +379,7 @@ export const FiltersSidebar = ({ genres, countries, onApply, className, sortOpti
       <Separator />
 
       {/* Director search */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         <label className="text-sm font-medium">{t('director')}</label>
         <PersonSearchInput
           value={store.director}
