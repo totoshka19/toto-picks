@@ -7,7 +7,7 @@ import { DEFAULT_FILTERS, MIN_YEAR, CURRENT_YEAR, VOTE_COUNT_MAX } from '@/lib/c
 
 // Reads URL params on mount and syncs them to the store — only if URL has params.
 // If no URL params, the persisted localStorage state is used as-is.
-// On store change, updates URL params via pushFiltersToUrl().
+// Automatically keeps URL in sync with store changes (debounced 300ms).
 export const useFiltersUrlSync = () => {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -47,7 +47,36 @@ export const useFiltersUrlSync = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Store → URL
+  // Store → URL (auto-sync, debounced 300ms to avoid flooding history on slider drag)
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (store.genres.length) params.set('genres', store.genres.join(','))
+    if (store.countries.length) params.set('countries', store.countries.join(','))
+    if (store.yearFrom !== MIN_YEAR) params.set('yearFrom', String(store.yearFrom))
+    if (store.yearTo !== CURRENT_YEAR) params.set('yearTo', String(store.yearTo))
+    if (store.ratingFrom !== 0) params.set('ratingFrom', String(store.ratingFrom))
+    if (store.ratingTo !== 10) params.set('ratingTo', String(store.ratingTo))
+    if (store.voteCountMin !== 0) params.set('voteCountMin', String(store.voteCountMin))
+    if (store.voteCountMax !== VOTE_COUNT_MAX) params.set('voteCountMax', String(store.voteCountMax))
+    if (store.sortBy !== DEFAULT_FILTERS.sortBy) params.set('sortBy', store.sortBy)
+    if (store.page !== 1) params.set('page', String(store.page))
+
+    const query = params.toString()
+    const timer = setTimeout(() => {
+      router.replace(`${pathname}${query ? `?${query}` : ''}`, { scroll: false })
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [
+    store.genres, store.countries,
+    store.yearFrom, store.yearTo,
+    store.ratingFrom, store.ratingTo,
+    store.voteCountMin, store.voteCountMax,
+    store.actors, store.director,
+    store.sortBy, store.page,
+    pathname, router,
+  ])
+
+  // Kept for mobile: immediately closes the drawer without waiting for debounce
   const pushFiltersToUrl = () => {
     const params = new URLSearchParams()
     if (store.genres.length) params.set('genres', store.genres.join(','))
