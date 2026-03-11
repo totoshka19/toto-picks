@@ -80,7 +80,7 @@ Data source: TMDB API (no backend, no database).
 
 ## Environment
 - Node.js + npm
-- TMDB API key stored in `.env.local` as `NEXT_PUBLIC_TMDB_API_KEY`
+- TMDB API key stored in `.env.local` as `TMDB_API_KEY` (server-only, no NEXT_PUBLIC prefix)
 - Dev server: `npm run dev` → http://localhost:3000 (redirects to /ru)
 
 ## Do NOT

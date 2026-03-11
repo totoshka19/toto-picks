@@ -31,7 +31,7 @@ export default function ErrorPage({
           Add your TMDB API key to <code className="text-primary">.env.local</code>:
           <br />
           <code className="text-xs bg-muted px-2 py-1 rounded mt-2 inline-block">
-            NEXT_PUBLIC_TMDB_API_KEY=your_key
+            TMDB_API_KEY=your_key
           </code>
           <br />
           Then restart <code className="text-primary">npm run dev</code>

@@ -17,40 +17,43 @@ import { TMDB_IMAGE_BASE, TMDB_IMAGE_SIZES, TMDB_LANGUAGE_MAP } from './constant
 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3'
 
-function getApiKey(): string {
-  const key = process.env.NEXT_PUBLIC_TMDB_API_KEY
-  if (!key || key === 'your_tmdb_api_key_here') {
-    console.warn('TMDB API key is not set. Add NEXT_PUBLIC_TMDB_API_KEY to .env.local')
-    return ''
-  }
-  return key
-}
-
 async function fetchTMDB<T>(
   endpoint: string,
   params: Record<string, string | number | undefined> = {},
   locale = 'ru'
 ): Promise<T> {
   const language = TMDB_LANGUAGE_MAP[locale] ?? 'ru-RU'
-  const searchParams = new URLSearchParams({
-    api_key: getApiKey(),
-    language,
-    ...Object.fromEntries(
-      Object.entries(params)
-        .filter(([, v]) => v !== undefined && v !== '')
-        .map(([k, v]) => [k, String(v)])
-    ),
-  })
+  const filteredParams = Object.fromEntries(
+    Object.entries(params)
+      .filter(([, v]) => v !== undefined && v !== '')
+      .map(([k, v]) => [k, String(v)])
+  )
 
-  const url = `${TMDB_BASE_URL}${endpoint}?${searchParams}`
-  const res = await fetch(url, {
-    next: { revalidate: 3600 }, // cache for 1 hour
-  })
-
-  if (!res.ok) {
-    throw new Error(`TMDB API error: ${res.status} ${res.statusText} (${endpoint})`)
+  // ── Server-side (RSC, generateMetadata, Route Handlers) ──────────────────
+  // TMDB_API_KEY lives only in the Node process — never reaches the browser.
+  if (typeof window === 'undefined') {
+    const apiKey = process.env.TMDB_API_KEY ?? ''
+    if (!apiKey || apiKey === 'your_tmdb_api_key_here') {
+      console.warn('TMDB API key is not set. Add TMDB_API_KEY to .env.local')
+    }
+    const searchParams = new URLSearchParams({ api_key: apiKey, language, ...filteredParams })
+    const res = await fetch(`${TMDB_BASE_URL}${endpoint}?${searchParams}`, {
+      next: { revalidate: 3600 },
+    })
+    if (!res.ok) {
+      throw new Error(`TMDB API error: ${res.status} ${res.statusText} (${endpoint})`)
+    }
+    return res.json() as Promise<T>
   }
 
+  // ── Client-side (TanStack Query, useEffect) ───────────────────────────────
+  // Routed through /api/tmdb — the Route Handler injects the key server-side.
+  // The API key is never present in the browser bundle or network requests.
+  const searchParams = new URLSearchParams({ _endpoint: endpoint, language, ...filteredParams })
+  const res = await fetch(`/api/tmdb?${searchParams}`)
+  if (!res.ok) {
+    throw new Error(`TMDB API error: ${res.status} (${endpoint})`)
+  }
   return res.json() as Promise<T>
 }
 
