@@ -10,6 +10,7 @@ import { MovieCard, MovieCardSkeleton } from '@/components/cards/movie-card'
 import { PersonCard } from '@/components/cards/person-card'
 import { EmptyState } from '@/components/empty-state'
 import { Pagination } from '@/components/pagination'
+import { MediaGrid } from '@/components/media-grid'
 import { Search } from 'lucide-react'
 import type { Movie, TVShow, Person, MultiSearchResult } from '@/types/tmdb'
 
@@ -65,16 +66,16 @@ export const SearchContent = () => {
           </TabsList>
 
           {isLoading ? (
-            <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">
+            <MediaGrid className="mt-4">
               {Array.from({ length: 10 }).map((_, i) => <MovieCardSkeleton key={i} />)}
-            </div>
+            </MediaGrid>
           ) : (
             <>
               <TabsContent value="all" className="mt-4">
                 {data?.results.length === 0 ? (
                   <EmptyState title={t('noResults')} description={t('noResultsDesc')} />
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                  <MediaGrid>
                     {data?.results.map((r) => {
                       if (isMovie(r)) return <MovieCard key={`m-${r.id}`} item={r} mediaType="movie" />
                       if (isTV(r)) return <MovieCard key={`t-${r.id}`} item={r} mediaType="tv" />
@@ -85,7 +86,7 @@ export const SearchContent = () => {
                       )
                       return null
                     })}
-                  </div>
+                  </MediaGrid>
                 )}
               </TabsContent>
 
@@ -93,9 +94,9 @@ export const SearchContent = () => {
                 {movies.length === 0 ? (
                   <EmptyState title={t('noResults')} />
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                  <MediaGrid>
                     {movies.map((r) => <MovieCard key={r.id} item={r} mediaType="movie" />)}
-                  </div>
+                  </MediaGrid>
                 )}
               </TabsContent>
 
@@ -103,9 +104,9 @@ export const SearchContent = () => {
                 {shows.length === 0 ? (
                   <EmptyState title={t('noResults')} />
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                  <MediaGrid>
                     {shows.map((r) => <MovieCard key={r.id} item={r} mediaType="tv" />)}
-                  </div>
+                  </MediaGrid>
                 )}
               </TabsContent>
 

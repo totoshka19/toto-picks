@@ -7,6 +7,7 @@ import { useDiscoverQuery } from './use-discover-query'
 import { useFiltersUrlSync } from '@/hooks/use-filters-url-sync'
 import { FiltersSidebar } from '@/features/filters/filters-sidebar'
 import { MovieCard, MovieCardSkeleton } from '@/components/cards/movie-card'
+import { MediaGrid } from '@/components/media-grid'
 import { Pagination } from '@/components/pagination'
 import { EmptyState } from '@/components/empty-state'
 import { Button } from '@/components/ui/button'
@@ -29,11 +30,11 @@ const CatalogGrid = ({ genres, mediaType }: Omit<CatalogContentProps, 'countries
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+      <MediaGrid className="sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {Array.from({ length: 20 }).map((_, i) => (
           <MovieCardSkeleton key={i} />
         ))}
-      </div>
+      </MediaGrid>
     )
   }
 
@@ -43,11 +44,11 @@ const CatalogGrid = ({ genres, mediaType }: Omit<CatalogContentProps, 'countries
 
   return (
     <>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+      <MediaGrid className="sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {data.results.map((item) => (
           <MovieCard key={item.id} item={item} mediaType={mediaType} genres={genres} />
         ))}
-      </div>
+      </MediaGrid>
       <Pagination
         page={store.page}
         totalPages={data.total_pages}

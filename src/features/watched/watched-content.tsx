@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import { useWatchedStore } from '@/store/watched'
 import { MovieCard } from '@/components/cards/movie-card'
 import { EmptyState } from '@/components/empty-state'
+import { MediaGrid } from '@/components/media-grid'
 import { Eye } from 'lucide-react'
 import { storedItemToMedia } from '@/lib/helpers'
 import type { Genre } from '@/types/tmdb'
@@ -39,11 +40,11 @@ export const WatchedContent = ({ movieGenres, tvGenres }: Props) => {
           <h2 className="text-lg font-semibold text-muted-foreground">
             {t('movies')} ({movies.length})
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+          <MediaGrid className="sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {movies.map((item) => (
               <MovieCard key={item.id} item={storedItemToMedia(item)} mediaType="movie" genres={movieGenres} />
             ))}
-          </div>
+          </MediaGrid>
         </section>
       )}
 
@@ -52,11 +53,11 @@ export const WatchedContent = ({ movieGenres, tvGenres }: Props) => {
           <h2 className="text-lg font-semibold text-muted-foreground">
             {t('shows')} ({shows.length})
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+          <MediaGrid className="sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {shows.map((item) => (
               <MovieCard key={item.id} item={storedItemToMedia(item)} mediaType="tv" genres={tvGenres} />
             ))}
-          </div>
+          </MediaGrid>
         </section>
       )}
     </div>
