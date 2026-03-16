@@ -46,16 +46,6 @@ export const SORT_OPTIONS_TV = [
 
 export const VOTE_COUNT_MAX = 30000
 
-export const VOTE_COUNT_OPTIONS = [
-  { value: 0, labelKey: 'any' },
-  { value: 100, label: '100+' },
-  { value: 500, label: '500+' },
-  { value: 1000, label: '1 000+' },
-  { value: 5000, label: '5 000+' },
-  { value: 10000, label: '10 000+' },
-  { value: VOTE_COUNT_MAX, label: `${VOTE_COUNT_MAX / 1000} 000+` },
-] as const
-
 export const CURRENT_YEAR = new Date().getFullYear()
 export const MIN_YEAR = 1900
 export const MAX_YEAR = CURRENT_YEAR

@@ -159,19 +159,6 @@ export interface Season {
   vote_average: number
 }
 
-export interface Episode {
-  id: number
-  name: string
-  overview: string
-  still_path: string | null
-  air_date: string | null
-  episode_number: number
-  season_number: number
-  vote_average: number
-  vote_count: number
-  runtime: number | null
-}
-
 export interface Cast {
   id: number
   name: string
