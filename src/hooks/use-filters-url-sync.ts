@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { useFiltersStore } from '@/store/filters'
 import { DEFAULT_FILTERS, MIN_YEAR, CURRENT_YEAR, VOTE_COUNT_MAX } from '@/lib/constants'
-import type { FilterState, PersonFilter } from '@/types/app'
+import type { FilterState, PersonFilter, SortByValue } from '@/types/app'
 
 // Serialises the current filter state to URLSearchParams.
 // Only non-default values are written to keep URLs clean.
@@ -77,7 +77,7 @@ export const useFiltersUrlSync = () => {
     store.setVoteCountMax(voteCountMax ? Number(voteCountMax) : VOTE_COUNT_MAX)
     store.setActors(actors ? actors.split('|').map(parsePersonParam).filter((p): p is PersonFilter => p !== null) : [])
     store.setDirector(director ? parsePersonParam(director) : null)
-    store.setSortBy(sortBy ?? DEFAULT_FILTERS.sortBy)
+    store.setSortBy((sortBy ?? DEFAULT_FILTERS.sortBy) as SortByValue)
     store.setPage(page ? Number(page) : 1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

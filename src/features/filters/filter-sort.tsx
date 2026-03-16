@@ -6,7 +6,7 @@ import { useFiltersStore } from '@/store/filters'
 import { cn } from '@/lib/utils'
 import { TrendingUp, Star, Calendar, Users, ArrowDown, ArrowUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import type { SortOption } from '@/types/app'
+import type { SortOption, SortByValue } from '@/types/app'
 
 const SORT_ICON_MAP: Record<string, LucideIcon> = {
   popularity: TrendingUp,
@@ -51,10 +51,10 @@ export const FilterSort = ({ sortOptions, onApply }: FilterSortProps) => {
     if (activeBase === base) {
       const hasAsc = sortOptions.some((opt) => opt.value === `${base}.asc`)
       if (hasAsc) {
-        store.setSortBy(activeDirIsDesc ? `${base}.asc` : `${base}.desc`)
+        store.setSortBy((activeDirIsDesc ? `${base}.asc` : `${base}.desc`) as SortByValue)
       }
     } else {
-      store.setSortBy(`${base}.desc`)
+      store.setSortBy(`${base}.desc` as SortByValue)
     }
     onApply?.()
   }

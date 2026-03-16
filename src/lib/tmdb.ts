@@ -95,7 +95,7 @@ export const tmdbMovies = {
     fetchTMDB<TMDBResponse<Movie>>('/movie/top_rated', { page }, locale),
 
   discover: (filters: DiscoverMovieFilters, locale = 'ru') =>
-    fetchTMDB<TMDBResponse<Movie>>('/discover/movie', filters as Record<string, string | number>, locale),
+    fetchTMDB<TMDBResponse<Movie>>('/discover/movie', filters, locale),
 
   detail: (id: number, locale = 'ru') =>
     fetchTMDB<MovieDetail>(
@@ -121,7 +121,7 @@ export const tmdbShows = {
     fetchTMDB<TMDBResponse<TVShow>>('/tv/top_rated', { page }, locale),
 
   discover: (filters: DiscoverTVFilters, locale = 'ru') =>
-    fetchTMDB<TMDBResponse<TVShow>>('/discover/tv', filters as Record<string, string | number>, locale),
+    fetchTMDB<TMDBResponse<TVShow>>('/discover/tv', filters, locale),
 
   detail: (id: number, locale = 'ru') =>
     fetchTMDB<TVShowDetail>(

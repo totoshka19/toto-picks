@@ -242,6 +242,9 @@ export type MultiSearchResult =
 
 // Discover filters
 export interface DiscoverBaseFilters {
+  // Index signature makes this compatible with Record<string, string | number | undefined>,
+  // allowing instances to be passed to fetchTMDB without unsafe casts.
+  [key: string]: string | number | undefined
   with_genres?: string
   with_origin_country?: string
   'vote_average.gte'?: number

@@ -44,6 +44,11 @@ export const SORT_OPTIONS_TV = [
   { value: 'vote_count.asc', labelKey: 'voteCountAsc' },
 ] as const
 
+/** Union of all valid sort_by values accepted by TMDB /discover endpoints. */
+export type SortByValue =
+  | typeof SORT_OPTIONS[number]['value']
+  | typeof SORT_OPTIONS_TV[number]['value']
+
 export const VOTE_COUNT_MAX = 30000
 
 export const CURRENT_YEAR = new Date().getFullYear()
@@ -61,7 +66,7 @@ export const DEFAULT_FILTERS = {
   voteCountMax: VOTE_COUNT_MAX,
   actors: [] as { id: number; name: string }[],
   director: null as { id: number; name: string } | null,
-  sortBy: 'popularity.desc',
+  sortBy: 'popularity.desc' as SortByValue,
   page: 1,
 }
 

@@ -1,3 +1,7 @@
+import type { SortByValue } from '@/lib/constants'
+
+export type { SortByValue }
+
 export type Language = 'ru' | 'en'
 
 export type MediaType = 'movie' | 'tv'
@@ -30,7 +34,7 @@ export interface FilterState {
   voteCountMax: number
   actors: PersonFilter[]
   director: PersonFilter | null
-  sortBy: string
+  sortBy: SortByValue
   page: number
 }
 

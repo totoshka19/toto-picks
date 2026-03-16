@@ -5,7 +5,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { createContext, useContext, createElement, type ReactNode } from 'react'
 import { useStore } from 'zustand'
 import { DEFAULT_FILTERS, CURRENT_YEAR, MIN_YEAR } from '@/lib/constants'
-import type { FilterState, MediaType, PersonFilter } from '@/types/app'
+import type { FilterState, MediaType, PersonFilter, SortByValue } from '@/types/app'
 
 interface FiltersStore extends FilterState {
   setGenres: (genres: number[]) => void
@@ -22,7 +22,7 @@ interface FiltersStore extends FilterState {
   addActor: (actor: PersonFilter) => void
   removeActor: (id: number) => void
   setDirector: (director: PersonFilter | null) => void
-  setSortBy: (sortBy: string) => void
+  setSortBy: (sortBy: SortByValue) => void
   setPage: (page: number) => void
   resetFilters: () => void
 }
