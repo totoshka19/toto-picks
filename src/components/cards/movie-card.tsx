@@ -113,7 +113,7 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
                   ? 'bg-primary text-primary-foreground opacity-100'
                   : 'bg-black/50 text-white hover:text-primary'
               )}
-              aria-label={isWatched ? 'Remove from watched' : 'Mark as watched'}
+              aria-label={isWatched ? t('removeFromWatched') : t('addToWatched')}
             >
               <Eye className="h-4 w-4" />
             </button>
@@ -127,7 +127,7 @@ export const MovieCard = ({ item, mediaType, genres }: MovieCardProps) => {
                   ? 'bg-primary text-primary-foreground opacity-100'
                   : 'bg-black/50 text-white hover:text-primary'
               )}
-              aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+              aria-label={isFavorite ? t('removeFromFavorites') : t('addToFavorites')}
             >
               <Heart className="h-4 w-4" />
             </button>

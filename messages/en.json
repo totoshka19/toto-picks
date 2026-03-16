@@ -131,7 +131,11 @@
     "next": "Next",
     "close": "Close",
     "back": "Back",
-    "noImage": "No image"
+    "noImage": "No image",
+    "addToFavorites": "Add to favorites",
+    "removeFromFavorites": "Remove from favorites",
+    "addToWatched": "Mark as watched",
+    "removeFromWatched": "Remove from watched"
   },
   "footer": {
     "copyright": "© 2026 toto-picks",

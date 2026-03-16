@@ -131,7 +131,11 @@
     "next": "Вперёд",
     "close": "Закрыть",
     "back": "Назад",
-    "noImage": "Нет фото"
+    "noImage": "Нет фото",
+    "addToFavorites": "Добавить в избранное",
+    "removeFromFavorites": "Убрать из избранного",
+    "addToWatched": "Отметить как просмотренное",
+    "removeFromWatched": "Убрать из просмотренных"
   },
   "footer": {
     "copyright": "© 2026 toto-picks",
